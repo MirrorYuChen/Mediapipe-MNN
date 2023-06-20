@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-06-20 15:25:00
+ * @LastEditTime: 2023-06-20 15:32:19
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
@@ -52,10 +52,8 @@ void PalmDetector::setSourceFormat(int format) {
   pretreat_ = std::shared_ptr<CV::ImageProcess>(CV::ImageProcess::create(image_process_config));
 }
 
-void PalmDetector::setInput(const ImageHead &in, RotateType type) {
-  int width = in.width;
-  int height = in.height;
-  std::vector<Point2f> input_region = getInputRegion(in.width, in.height, input_w_, input_h_, type);
+void PalmDetector::setInputSize(int in_w, int in_h, RotateType type) {
+  std::vector<Point2f> input_region = getInputRegion(in_w, in_h, input_w_, input_h_, type);
   float points_src[] = {
     input_region[0].x, input_region[0].y,
     input_region[1].x, input_region[1].y,
@@ -68,11 +66,8 @@ void PalmDetector::setInput(const ImageHead &in, RotateType type) {
     (float)(input_w_ - 1), 0.0f,
     (float)(input_w_ - 1), (float)(input_h_ - 1),
   };
-
-  CV::Matrix trans;
-  trans.setPolyToPoly((CV::Point*)points_dst, (CV::Point*)points_dst, 4);
-  pretreat_->setMatrix(trans);
-  pretreat_->convert((uint8_t*)in.data, width, height, in.width_step, input_tensor_);
+  trans_.setPolyToPoly((CV::Point*)points_dst, (CV::Point*)points_dst, 4);
+  pretreat_->setMatrix(trans_);
 }
 
 bool PalmDetector::Detect(const ImageHead &in, RotateType type,
@@ -89,7 +84,9 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
     return false;
   }
   // 1.set input
-  setInput(in, type);
+  int width = in.width;
+  int height = in.height;
+  pretreat_->convert((uint8_t*)in.data, width, height, in.width_step, input_tensor_);
  
   // 2.do inference
   int ret = net_->runSession(sess_);

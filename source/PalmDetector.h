@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:20:56
- * @LastEditTime: 2023-06-20 15:04:16
+ * @LastEditTime: 2023-06-20 15:28:54
  * @Description: palm detector
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.h
  */
@@ -23,11 +23,9 @@ public:
 
   bool LoadModel(const char *model_file);
   void setSourceFormat(int format);
+  void setInputSize(int in_w, int in_h, RotateType type);
   bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
-
-private:
-  void setInput(const ImageHead &in, RotateType type);
-
+  
 private:
   bool inited_ = false;
   int input_w_ = 0;
@@ -36,6 +34,7 @@ private:
   std::unique_ptr<MNN::Interpreter> net_ = nullptr;
   MNN::Session *sess_ = nullptr;
   MNN::Tensor *input_tensor_ = nullptr;
+  CV::Matrix trans_;
 
   const float meanVals_[3] = {0.0f, 0.0f, 0.0f};
   const float normVals_[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};
