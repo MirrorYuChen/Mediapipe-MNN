@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-06-20 15:32:19
+ * @LastEditTime: 2023-06-20 15:40:58
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
@@ -66,7 +66,7 @@ void PalmDetector::setInputSize(int in_w, int in_h, RotateType type) {
     (float)(input_w_ - 1), 0.0f,
     (float)(input_w_ - 1), (float)(input_h_ - 1),
   };
-  trans_.setPolyToPoly((CV::Point*)points_dst, (CV::Point*)points_dst, 4);
+  trans_.setPolyToPoly((CV::Point*)points_dst, (CV::Point*)points_src, 4);
   pretreat_->setMatrix(trans_);
 }
 
@@ -108,8 +108,8 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   regressor->copyToHostTensor(output_regressor.get());
   
   // 4.parse the result
-
-
+  printf("classify nchw: %d x %d x %d x %d", output_classify->batch(), output_classify->channel(), output_classify->height(), output_classify->width()); 
+  printf("regression nchw: %d x %d x %d x %d", output_regressor->batch(), output_regressor->channel(), output_regressor->height(), output_regressor->width());
 
 
   std::cout << "Edn detect." << std::endl;

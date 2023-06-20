@@ -17,6 +17,14 @@ file(GLOB_RECURSE SRC_FILES
     ${SRC_DIR}/*.cc
 )
 
-add_executable(TestHand ${SRC_FILES})
-target_link_libraries(TestHand MNN) 
+add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
+target_link_libraries(${PROJECT_NAME} MNN)
 
+set(EXAMPLE_LIST
+    TestPalmDetection
+)
+
+foreach(EXAMPLE ${EXAMPLE_LIST})
+    add_executable(${EXAMPLE} examples/${EXAMPLE}.cc)
+    target_link_libraries(${EXAMPLE} ${PROJECT_NAME})
+endforeach(EXAMPLE ${EXAMPLE_LIST})
