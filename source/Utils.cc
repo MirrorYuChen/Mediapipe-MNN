@@ -1,11 +1,12 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-06-20 12:42:38
+ * @LastEditTime: 2023-06-20 15:22:32
  * @Description: utils module
  * @FilePath: \Mediapipe-Hand\source\Utils.cc
  */
 #include "Utils.h"
+#include <iostream>
 
 namespace mirror {
 float ComputeRotation(const NormalizedLandmarkList &landmarks,
@@ -87,6 +88,52 @@ int NormalizedLandmarkListToRect(const NormalizedLandmarkList &landmarks,
   rect.h = rotation;
 
   return 0;
+}
+
+std::vector<Point2f> getInputRegion(int in_w, int in_h, int out_w, int out_h, RotateType type) {
+  std::vector<Point2f> input_region(4);
+  float in_scale = static_cast<float>(in_w) / static_cast<float>(in_h);
+  float out_scale = static_cast<float>(out_w) / static_cast<float>(out_h);
+
+  int region_w = in_w;
+  int region_h = in_h;
+  if (in_scale > out_scale) {
+    region_h = region_w / out_scale;
+  } else {
+    region_w = region_h * out_scale;
+  }
+  
+  switch (type) {
+    case RotateType::CLOCKWISE_ROTATE_0:
+      input_region[0].x = 0.0f,         input_region[0].y = 0.0f;
+      input_region[1].x = 0.0f,         input_region[1].y = region_h - 1;
+      input_region[2].x = region_w - 1, input_region[2].y = 0.0f;
+      input_region[3].x = region_w - 1, input_region[3].y = region_h - 1;
+      break;
+    case RotateType::CLOCKWISE_ROTATE_90:
+      input_region[2].x = 0.0f,         input_region[2].y = 0.0f;
+      input_region[0].x = 0.0f,         input_region[0].y = region_h - 1;
+      input_region[3].x = region_w - 1, input_region[3].y = 0.0f;
+      input_region[1].x = region_w - 1, input_region[1].y = region_h - 1;
+      break;
+    case RotateType::CLOCKWISE_ROTATE_180:
+      input_region[3].x = 0.0f,         input_region[3].y = 0.0f;
+      input_region[2].x = 0.0f,         input_region[2].y = region_h - 1;
+      input_region[1].x = region_w - 1, input_region[1].y = 0.0f;
+      input_region[0].x = region_w - 1, input_region[0].y = region_h - 1;
+      break;
+    case RotateType::CLOCKWISE_ROTATE_270:
+      input_region[1].x = 0.0f,         input_region[1].y = 0.0f;
+      input_region[3].x = 0.0f,         input_region[3].y = region_h - 1;
+      input_region[0].x = region_w - 1, input_region[0].y = 0.0f;
+      input_region[2].x = region_w - 1, input_region[2].y = region_h - 1;
+      break;
+    default:
+      std::cout << "Error unknown rotate type." << std::endl;
+      break;
+  }
+
+  return input_region;
 }
 
 } // namespace mirror

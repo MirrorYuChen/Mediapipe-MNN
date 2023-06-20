@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-06-20 12:41:14
+ * @LastEditTime: 2023-06-20 15:04:05
  * @Description: type defines
  * @FilePath: \Mediapipe-Hand\source\TypeDefines.h
  */
@@ -37,21 +37,28 @@ struct ObjectInfo {
 };
 
 enum PixelFormat {
-    AISDK_PIX_FMT_GRAY8 = 1,   ///< Y    1        8bpp ( 单通道8bit灰度像素 )
-    AISDK_PIX_FMT_YUV420P, ///< YUV  4:2:0   12bpp ( 3通道, 一个亮度通道, 另两个为U分量和V分量通道, 所有通道都是连续的
-    AISDK_PIX_FMT_NV12,    ///< YUV  4:2:0   12bpp ( 2通道, 一个通道是连续的亮度通道, 另一通道为UV分量交错 )
-    AISDK_PIX_FMT_NV21,    ///< YUV  4:2:0   12bpp ( 2通道, 一个通道是连续的亮度通道, 另一通道为VU分量交错 )
-    AISDK_PIX_FMT_BGRA8888,///< BGRA 8:8:8:8 32bpp ( 4通道32bit BGRA 像素 )
-    AISDK_PIX_FMT_BGR888,  ///< BGR  8:8:8   24bpp ( 3通道24bit BGR 像素 )
-    AISDK_PIX_FMT_RGBA8888,///< RGBA 8:8:8:8 32bpp ( 4通道32bit RGBA 像素 )
-    AISDK_PIX_FMT_RGB888   ///< RGB  8:8:8   24bpp ( 3通道24bit RGB 像素 )
+    RGBA     = 0,
+    RGB      = 1,
+    BGR      = 2,
+    GRAY     = 3,
+    BGRA     = 4,
+    YCrCb    = 5,
+    YUV      = 6,
+    HSV      = 7,
+    XYZ      = 8,
+    BGR555   = 9,
+    BGR565   = 10,
+    YUV_NV21 = 11,
+    YUV_NV12 = 12,
+    YUV_I420 = 13,
+    HSV_FULL = 14,
 };
 
 enum RotateType {
-    AISDK_CLOCKWISE_ROTATE_0 = 0,  ///< 图像不需要旋转,图像中的人脸为正脸
-    AISDK_CLOCKWISE_ROTATE_90 = 1, ///< 图像需要顺时针旋转90度,使图像中的人脸为正
-    AISDK_CLOCKWISE_ROTATE_180 = 2,///< 图像需要顺时针旋转180度,使图像中的人脸为正
-    AISDK_CLOCKWISE_ROTATE_270 = 3 ///< 图像需要顺时针旋转270度,使图像中的人脸为正    
+    CLOCKWISE_ROTATE_0 = 0,  ///< 图像不需要旋转,图像中的人脸为正脸
+    CLOCKWISE_ROTATE_90 = 1, ///< 图像需要顺时针旋转90度,使图像中的人脸为正
+    CLOCKWISE_ROTATE_180 = 2,///< 图像需要顺时针旋转180度,使图像中的人脸为正
+    CLOCKWISE_ROTATE_270 = 3 ///< 图像需要顺时针旋转270度,使图像中的人脸为正    
 };
 
 typedef struct ImageHead_t {
