@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-06-19 17:39:30
+ * @LastEditTime: 2023-06-20 12:28:45
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
@@ -9,19 +9,20 @@
 
 namespace mirror {
 PalmDetector::PalmDetector() {
-    // TODO:
+  // TODO:
 }
 
 PalmDetector::~PalmDetector() {
-    // TODO:
+  // TODO:
 }
 
 bool PalmDetector::LoadModel(const char *model_file) {
-    // TODO:
+  // TODO:
 }
 
-int PalmDetector::Detect(const ImageHead &in, std::vector<ObjectInfo> &objects) {
-    // TODO:
+int PalmDetector::Detect(const ImageHead &in,
+                         std::vector<ObjectInfo> &objects) {
+  // TODO:
 }
 
 } // namespace mirror
