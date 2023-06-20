@@ -1,20 +1,32 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-06-19 17:27:35
+ * @LastEditTime: 2023-06-20 12:41:14
  * @Description: type defines
  * @FilePath: \Mediapipe-Hand\source\TypeDefines.h
  */
 #pragma once
 
 #include <string>
-
+#include <vector>
 namespace mirror {
 using byte = unsigned char;
 struct Point2f {
     float x;
     float y;
 };
+
+using NormalizedLandmarkList = std::vector<Point2f>;
+
+struct Rect {
+    float cx;
+    float cy;
+    float w;
+    float h;
+    float r;
+};
+
+using NormalizedRect = Rect;
 
 struct ObjectInfo {
     std::string name;
