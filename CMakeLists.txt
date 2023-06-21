@@ -10,7 +10,10 @@ add_subdirectory(${3RD_DIR}/MNN-2.3.0)
 include_directories(
     ${SRC_DIR}
     ${3RD_DIR}/MNN-2.3.0/include
+    ${3RD_DIR}/opencv-3.4.2/include
 )
+link_directories(${CMAKE_CURRENT_LIST_DIR}/3rdparty/opencv-3.4.2/lib)
+list(APPEND OBJECTS_TO_LINK opencv_world342)
 
 file(GLOB_RECURSE SRC_FILES
     ${SRC_DIR}/*.h
@@ -26,5 +29,5 @@ set(EXAMPLE_LIST
 
 foreach(EXAMPLE ${EXAMPLE_LIST})
     add_executable(${EXAMPLE} examples/${EXAMPLE}.cc)
-    target_link_libraries(${EXAMPLE} ${PROJECT_NAME})
+    target_link_libraries(${EXAMPLE} ${PROJECT_NAME} ${OBJECTS_TO_LINK})
 endforeach(EXAMPLE ${EXAMPLE_LIST})

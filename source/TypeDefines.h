@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-06-20 15:04:05
+ * @LastEditTime: 2023-06-21 10:02:43
  * @Description: type defines
  * @FilePath: \Mediapipe-Hand\source\TypeDefines.h
  */
@@ -16,6 +16,7 @@ struct Point2f {
     float y;
 };
 
+using LandmarkList = std::vector<Point2f>;
 using NormalizedLandmarkList = std::vector<Point2f>;
 
 struct Rect {

@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-06-20 15:22:32
+ * @LastEditTime: 2023-06-21 09:58:43
  * @Description: utils module
  * @FilePath: \Mediapipe-Hand\source\Utils.cc
  */
@@ -15,13 +15,13 @@ float ComputeRotation(const NormalizedLandmarkList &landmarks,
   const float y0 = landmarks[kWristJoint].y * image_size.second;
 
   float x1 =
-      (landmarks[kIndexFingerPIPJoint].x + landmarks[kRingFingerPIPJoint].x) /
+      (landmarks[kIndexFingerJoint].x + landmarks[kRingFingerJoint].x) /
       2.f;
   float y1 =
-      (landmarks[kIndexFingerPIPJoint].y + landmarks[kRingFingerPIPJoint].y) /
+      (landmarks[kIndexFingerJoint].y + landmarks[kRingFingerJoint].y) /
       2.f;
-  x1 = (x1 + landmarks[kMiddleFingerPIPJoint].x) / 2.f * image_size.first;
-  y1 = (y1 + landmarks[kMiddleFingerPIPJoint].y) / 2.f * image_size.second;
+  x1 = (x1 + landmarks[kMiddleFingerJoint].x) / 2.f * image_size.first;
+  y1 = (y1 + landmarks[kMiddleFingerJoint].y) / 2.f * image_size.second;
 
   const float rotation =
       NormalizeRadians(kTargetAngle - std::atan2(-(y1 - y0), x1 - x0));

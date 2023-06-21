@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-06-20 15:40:58
+ * @LastEditTime: 2023-06-21 10:07:11
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
@@ -114,6 +114,15 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
 
   std::cout << "Edn detect." << std::endl;
   return true;
+}
+
+void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes, LandmarkList &result) {
+  result.clear();
+  float *scores_ptr = scores->host<float>();
+  float *boxes_ptr = boxes->host<float>();
+
+  int channel = scores->channel();
+  
 }
 
 } // namespace mirror

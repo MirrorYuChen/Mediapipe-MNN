@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:20:56
- * @LastEditTime: 2023-06-20 15:28:54
+ * @LastEditTime: 2023-06-21 10:03:06
  * @Description: palm detector
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.h
  */
@@ -27,6 +27,9 @@ public:
   bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
   
 private:
+  void ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes, LandmarkList &result);
+
+private:
   bool inited_ = false;
   int input_w_ = 0;
   int input_h_ = 0;
@@ -35,6 +38,7 @@ private:
   MNN::Session *sess_ = nullptr;
   MNN::Tensor *input_tensor_ = nullptr;
   CV::Matrix trans_;
+  float score_thresh_ = 0.6f;
 
   const float meanVals_[3] = {0.0f, 0.0f, 0.0f};
   const float normVals_[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};

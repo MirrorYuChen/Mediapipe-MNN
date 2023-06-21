@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:31
- * @LastEditTime: 2023-06-20 15:12:38
+ * @LastEditTime: 2023-06-21 09:58:27
  * @Description: utils module
  * @FilePath: \Mediapipe-Hand\source\Utils.h
  */
@@ -21,9 +21,9 @@ namespace mirror {
 
 // Indices within the partial landmarks.
 constexpr int kWristJoint = 0;
-constexpr int kMiddleFingerPIPJoint = 6;
-constexpr int kIndexFingerPIPJoint = 4;
-constexpr int kRingFingerPIPJoint = 8;
+constexpr int kMiddleFingerJoint = 6;
+constexpr int kIndexFingerJoint = 4;
+constexpr int kRingFingerJoint = 8;
 constexpr int kNumLandmarks = 21;
 constexpr float kTargetAngle = M_PI * 0.5f;
 
