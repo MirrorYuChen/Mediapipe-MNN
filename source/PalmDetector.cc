@@ -108,11 +108,11 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   regressor->copyToHostTensor(output_regressor.get());
   
   // 4.parse the result
-  printf("classify nchw: %d x %d x %d x %d", output_classify->batch(), output_classify->channel(), output_classify->height(), output_classify->width()); 
-  printf("regression nchw: %d x %d x %d x %d", output_regressor->batch(), output_regressor->channel(), output_regressor->height(), output_regressor->width());
+  printf("classify nchw: %d x %d x %d x %d.\n", output_classify->batch(), output_classify->channel(), output_classify->height(), output_classify->width()); 
+  printf("regression nchw: %d x %d x %d x %d.\n", output_regressor->batch(), output_regressor->channel(), output_regressor->height(), output_regressor->width());
 
 
-  std::cout << "Edn detect." << std::endl;
+  std::cout << "End detect." << std::endl;
   return true;
 }
 

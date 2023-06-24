@@ -12,7 +12,7 @@ include_directories(
     ${3RD_DIR}/MNN-2.3.0/include
     ${3RD_DIR}/opencv-3.4.2/include
 )
-link_directories(${CMAKE_CURRENT_LIST_DIR}/3rdparty/opencv-3.4.2/lib)
+link_directories(${CMAKE_CURRENT_LIST_DIR}/3rdLibs/opencv-3.4.2/lib)
 list(APPEND OBJECTS_TO_LINK opencv_world342)
 
 file(GLOB_RECURSE SRC_FILES

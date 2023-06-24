@@ -12,7 +12,7 @@
 using namespace mirror;
 
 int main(int argc, char *argv[]) {
-  const char *image_file = "../data/images/han.jpg";
+  const char *image_file = "../data/images/hand.jpg";
   cv::Mat image = cv::imread(image_file);
   if (image.empty()) {
     std::cout << "failed load image." << std::endl;

@@ -37,7 +37,7 @@ private:
   std::unique_ptr<MNN::Interpreter> net_ = nullptr;
   MNN::Session *sess_ = nullptr;
   MNN::Tensor *input_tensor_ = nullptr;
-  CV::Matrix trans_;
+  MNN::CV::Matrix trans_;
   float score_thresh_ = 0.6f;
 
   const float meanVals_[3] = {0.0f, 0.0f, 0.0f};
