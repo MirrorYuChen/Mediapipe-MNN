@@ -136,4 +136,8 @@ std::vector<Point2f> getInputRegion(int in_w, int in_h, int out_w, int out_h, Ro
   return input_region;
 }
 
+float sigmoid(float x) {
+  return static_cast<float>(1.f / (1.f + exp(-x)));
+}
+
 } // namespace mirror

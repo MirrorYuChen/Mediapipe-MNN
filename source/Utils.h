@@ -40,4 +40,5 @@ int NormalizedLandmarkListToRect(const NormalizedLandmarkList &landmarks,
 
 std::vector<Point2f> getInputRegion(int in_w, int in_h, int out_w, int out_h, RotateType type);
 
+float sigmoid(float x);
 } // namespace mirror

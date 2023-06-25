@@ -25,6 +25,7 @@ struct Rect {
     float w;
     float h;
     float r;
+    float score;
 };
 
 using NormalizedRect = Rect;

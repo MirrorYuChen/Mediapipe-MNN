@@ -37,6 +37,13 @@ int main(int argc, char *argv[]) {
 
   std::vector<ObjectInfo> objects;
   detector.Detect(in, type, objects);
+  for (const auto &object : objects) {
+    cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
+                  cv::Point2f(object.br.x, object.br.y),
+                  cv::Scalar(255, 0, 255), 2);
+  }
+  cv::imshow("result", image);
+  cv::waitKey(0);
 
   return 0;
 }

@@ -27,7 +27,8 @@ public:
   bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
   
 private:
-  void ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes, LandmarkList &result);
+  void ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
+                    std::vector<ObjectInfo> &objects);
 
 private:
   bool inited_ = false;

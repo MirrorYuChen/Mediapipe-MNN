@@ -1,13 +1,14 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-06-21 10:07:11
+ * @LastEditTime: 2023-06-24 12:55:02
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
 #include "PalmDetector.h"
 #include <iostream>
 #include "Utils.h"
+#include "PalmData.h"
 
 namespace mirror {
 using namespace MNN;
@@ -108,21 +109,62 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   regressor->copyToHostTensor(output_regressor.get());
   
   // 4.parse the result
-  printf("classify nchw: %d x %d x %d x %d.\n", output_classify->batch(), output_classify->channel(), output_classify->height(), output_classify->width()); 
-  printf("regression nchw: %d x %d x %d x %d.\n", output_regressor->batch(), output_regressor->channel(), output_regressor->height(), output_regressor->width());
-
+  // printf("classify nchw: %d x %d x %d x %d.\n", output_classify->batch(), output_classify->channel(), output_classify->height(), output_classify->width()); 
+  // printf("regression nchw: %d x %d x %d x %d.\n", output_regressor->batch(), output_regressor->channel(), output_regressor->height(), output_regressor->width());
+  ParseOutputs(output_classify.get(), output_regressor.get(), objects);
 
   std::cout << "End detect." << std::endl;
   return true;
 }
 
-void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes, LandmarkList &result) {
-  result.clear();
+void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
+                                std::vector<ObjectInfo> &objects) {
+  objects.clear();
   float *scores_ptr = scores->host<float>();
   float *boxes_ptr = boxes->host<float>();
 
+  int batch = scores->batch();
   int channel = scores->channel();
+  int height = scores->height();
+  int width = scores->width();
   
+  ObjectInfo object;
+  for (int i = 0; i < channel; ++i) {
+    float score = sigmoid(scores_ptr[i]);
+    if (score < score_thresh_) continue;
+    float offset_x = BLAZE_PALM_ANCHORS[4 * i + 0] * input_w_;
+    float offset_y = BLAZE_PALM_ANCHORS[4 * i + 1] * input_h_;
+    float *ptr = boxes_ptr + 18 * i;
+    float cx = ptr[0] + offset_x;
+    float cy = ptr[1] + offset_y;
+    float w = ptr[2];
+    float h = ptr[3];
+
+    object.score = score;
+    Point2f tl, br;
+    tl.x = cx - 0.5f * w;
+    tl.y = cy - 0.5f * h;
+    br.x = cx + 0.5f * w;
+    br.y = cy + 0.5f * h;
+
+    std::vector<Point2f> landmarks(7);
+    for (int j = 0; j < 7; ++j) {
+      landmarks[j].x = ptr[4 + 2 * j + 0] + offset_x;
+      landmarks[j].y = ptr[4 + 2 * j + 1] + offset_y;
+    }
+    object.tl.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
+    object.tl.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];
+    object.br.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
+    object.br.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
+    for (int j = 0; j < 7; ++j) {
+      object.landmarks[j].x =
+          trans_[0] * landmarks[j].x + trans_[1] * landmarks[j].y + trans_[2];
+      object.landmarks[j].y =
+          trans_[3] * landmarks[j].x + trans_[4] * landmarks[j].y + trans_[5];
+    }
+
+    objects.emplace_back(object);
+  }
 }
 
 } // namespace mirror
