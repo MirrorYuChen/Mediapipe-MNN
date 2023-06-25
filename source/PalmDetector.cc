@@ -154,7 +154,7 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
     br.x = cx + 0.5f * w;
     br.y = cy + 0.5f * h;
 
-    std::vector<Point2f> landmarks(7);
+    std::vector<Point2f> landmarks(7), index_landmarks(7);
     for (int j = 0; j < 7; ++j) {
       landmarks[j].x = ptr[4 + 2 * j + 0] + offset_x;
       landmarks[j].y = ptr[4 + 2 * j + 1] + offset_y;
@@ -164,12 +164,12 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
     object.br.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
     object.br.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
     for (int j = 0; j < 7; ++j) {
-      object.landmarks[j].x =
+      index_landmarks[j].x =
           trans_[0] * landmarks[j].x + trans_[1] * landmarks[j].y + trans_[2];
-      object.landmarks[j].y =
+      index_landmarks[j].y =
           trans_[3] * landmarks[j].x + trans_[4] * landmarks[j].y + trans_[5];
     }
-    object.rotation = ComputeRotation(object);
+    object.rotation = ComputeRotation(index_landmarks[0], index_landmarks[2]);
 
     objects.emplace_back(object);
   }

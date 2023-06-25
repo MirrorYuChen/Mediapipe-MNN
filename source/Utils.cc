@@ -14,11 +14,11 @@ float NormalizeRadians(float angle) {
   return angle - 2 * M_PI * std::floor((angle - (-M_PI)) / (2 * M_PI));
 }
 
-float ComputeRotation(const ObjectInfo &object) {
-  const float x0 = object.landmarks[kWristJoint].x;
-  const float y0 = object.landmarks[kWristJoint].y;
-  const float x1 = object.landmarks[kMiddleFingerJoint].x;
-  const float y1 = object.landmarks[kMiddleFingerJoint].y;
+float ComputeRotation(const Point2f &src, const Point2f &dst) {
+  const float x0 = src.x;
+  const float y0 = src.y;
+  const float x1 = dst.x;
+  const float y1 = dst.y;
 
   const float rotation =
       NormalizeRadians(kTargetAngle - std::atan2(-(y1 - y0), x1 - x0));

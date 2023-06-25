@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:11:06
- * @LastEditTime: 2023-06-25 11:38:10
+ * @LastEditTime: 2023-06-25 12:31:30
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.cc
  */
@@ -71,7 +71,20 @@ void LandmarkerDetector::setInputSize(int in_w, int in_h, RotateType type) {
 }
 
 bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type, std::vector<Point2f> &landmarks) {
+  std::cout << "Start detect." << std::endl;
+  landmarks.clear();
+  if (in.data == nullptr) {
+    std::cout << "Error Input empty." << std::endl;
+    return false;
+  }
 
+  if (!inited_) {
+    std::cout << "Model Uninitialized." << std::endl;
+    return false;
+  }
+  // 1.set input
+  int width = in.width;
+  int height = in.height;
 }
 
 

@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:31
- * @LastEditTime: 2023-06-25 11:17:19
+ * @LastEditTime: 2023-06-25 12:37:42
  * @Description: utils module
  * @FilePath: \Mediapipe-Hand\source\Utils.h
  */
@@ -20,13 +20,11 @@ namespace mirror {
 #define MIN_(x, y) ((x) < (y) ? (x) : y)
 
 // Indices within the partial landmarks.
-constexpr int kWristJoint = 0;
-constexpr int kMiddleFingerJoint = 2;
 constexpr int kNumLandmarks = 21;
 constexpr float kTargetAngle = M_PI * 0.5f;
 
 float NormalizeRadians(float angle);
-float ComputeRotation(const ObjectInfo &object);
+float ComputeRotation(const Point2f & src, const Point2f &dst);
 
 int NormalizedLandmarkListToRect(const NormalizedLandmarkList &landmarks,
                                  const std::pair<int, int> &image_size,

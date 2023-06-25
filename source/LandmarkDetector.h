@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:10:57
- * @LastEditTime: 2023-06-25 11:34:47
+ * @LastEditTime: 2023-06-25 12:32:43
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.h
  */
@@ -25,7 +25,6 @@ public:
   void setSourceFormat(int format);
   void setInputSize(int in_w, int in_h, RotateType type);
   bool Detect(const ImageHead &in, RotateType type, std::vector<Point2f> &landmarks);
-
 
 private:
   bool inited_ = false;

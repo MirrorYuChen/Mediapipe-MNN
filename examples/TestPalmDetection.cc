@@ -40,16 +40,6 @@ int main(int argc, char *argv[]) {
     cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
                   cv::Point2f(object.br.x, object.br.y),
                   cv::Scalar(255, 0, 255), 2);
-    for (int i = 0; i < 7; ++i) {;
-      cv::circle(
-          image,
-          cv::Point((int)object.landmarks[i].x, (int)object.landmarks[i].y), 2,
-          cv::Scalar(0, 255, 0));
-      cv::putText(
-          image, std::to_string(i),
-          cv::Point((int)object.landmarks[i].x, (int)object.landmarks[i].y), 1,
-          1.0, cv::Scalar(0, 255, 0));
-    }
   }
   cv::imshow("result", image);
   cv::waitKey(0);

@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-06-21 10:02:43
+ * @LastEditTime: 2023-06-25 12:33:09
  * @Description: type defines
  * @FilePath: \Mediapipe-Hand\source\TypeDefines.h
  */
@@ -34,7 +34,7 @@ struct ObjectInfo {
     std::string name;
     Point2f tl;
     Point2f br;
-    Point2f landmarks[7];
+    Point2f landmarks[21];
     float score;
     float rotation;
 };
