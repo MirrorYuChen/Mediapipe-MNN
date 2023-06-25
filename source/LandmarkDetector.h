@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:10:57
- * @LastEditTime: 2023-06-25 12:32:43
+ * @LastEditTime: 2023-06-25 12:39:11
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.h
  */
@@ -18,13 +18,13 @@
 namespace mirror {
 class LandmarkerDetector {
 public:
-  LandmarkerDetector();
+  LandmarkerDetector() = default;
   ~LandmarkerDetector();
 
   bool LoadModel(const char *model_file);
   void setSourceFormat(int format);
   void setInputSize(int in_w, int in_h, RotateType type);
-  bool Detect(const ImageHead &in, RotateType type, std::vector<Point2f> &landmarks);
+  bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
 
 private:
   bool inited_ = false;

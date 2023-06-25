@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-06-25 12:27:18
+ * @LastEditTime: 2023-06-25 17:50:28
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
@@ -137,11 +137,11 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
   ObjectInfo object;
   for (int i = 0; i < channel; ++i) {
     float score = sigmoid(scores_ptr[i]);
-    if (score < score_thresh_)
-      continue;
+    if (score < score_thresh_) continue;
     float offset_x = BLAZE_PALM_ANCHORS[4 * i + 0] * input_w_;
     float offset_y = BLAZE_PALM_ANCHORS[4 * i + 1] * input_h_;
     float *ptr = boxes_ptr + 18 * i;
+    // 1.parse the box information
     float cx = ptr[0] + offset_x;
     float cy = ptr[1] + offset_y;
     float w = ptr[2];
@@ -154,22 +154,18 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
     br.x = cx + 0.5f * w;
     br.y = cy + 0.5f * h;
 
-    std::vector<Point2f> landmarks(7), index_landmarks(7);
+    // 2.parse the index landmarks
+    Point2f landmark;
     for (int j = 0; j < 7; ++j) {
-      landmarks[j].x = ptr[4 + 2 * j + 0] + offset_x;
-      landmarks[j].y = ptr[4 + 2 * j + 1] + offset_y;
+      landmark.x = ptr[4 + 2 * j + 0] + offset_x;
+      landmark.y = ptr[4 + 2 * j + 1] + offset_y;
+      object.index_landmarks[j].x = trans_[0] * landmark.x + trans_[1] * landmark.y + trans_[2];
+      object.index_landmarks[j].y = trans_[3] * landmark.x + trans_[4] * landmark.y + trans_[5];
     }
     object.tl.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
     object.tl.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];
     object.br.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
     object.br.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
-    for (int j = 0; j < 7; ++j) {
-      index_landmarks[j].x =
-          trans_[0] * landmarks[j].x + trans_[1] * landmarks[j].y + trans_[2];
-      index_landmarks[j].y =
-          trans_[3] * landmarks[j].x + trans_[4] * landmarks[j].y + trans_[5];
-    }
-    object.rotation = ComputeRotation(index_landmarks[0], index_landmarks[2]);
 
     objects.emplace_back(object);
   }

@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-06-25 12:33:09
+ * @LastEditTime: 2023-06-25 17:46:37
  * @Description: type defines
  * @FilePath: \Mediapipe-Hand\source\TypeDefines.h
  */
@@ -31,12 +31,13 @@ struct Rect {
 using NormalizedRect = Rect;
 
 struct ObjectInfo {
-    std::string name;
     Point2f tl;
     Point2f br;
     Point2f landmarks[21];
+    Point2f index_landmarks[7];
     float score;
     float rotation;
+    int left_right;
 };
 
 enum PixelFormat {
