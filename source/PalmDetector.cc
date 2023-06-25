@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-06-24 12:55:02
+ * @LastEditTime: 2023-06-25 11:08:23
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
@@ -112,6 +112,7 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   // printf("classify nchw: %d x %d x %d x %d.\n", output_classify->batch(), output_classify->channel(), output_classify->height(), output_classify->width()); 
   // printf("regression nchw: %d x %d x %d x %d.\n", output_regressor->batch(), output_regressor->channel(), output_regressor->height(), output_regressor->width());
   ParseOutputs(output_classify.get(), output_regressor.get(), objects);
+  NMSObjects(objects, iouThreshold_);
 
   std::cout << "End detect." << std::endl;
   return true;

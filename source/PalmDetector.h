@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:20:56
- * @LastEditTime: 2023-06-21 10:03:06
+ * @LastEditTime: 2023-06-25 11:08:37
  * @Description: palm detector
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.h
  */
@@ -43,7 +43,7 @@ private:
 
   const float meanVals_[3] = {0.0f, 0.0f, 0.0f};
   const float normVals_[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};
-  const float nmsThreshold_ = 0.5f;
+  const float iouThreshold_ = 0.5f;
 };
 
 } // namespace mirror

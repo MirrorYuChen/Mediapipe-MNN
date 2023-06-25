@@ -1,12 +1,13 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-06-21 09:58:43
+ * @LastEditTime: 2023-06-25 11:07:58
  * @Description: utils module
  * @FilePath: \Mediapipe-Hand\source\Utils.cc
  */
 #include "Utils.h"
 #include <iostream>
+#include <algorithm>
 
 namespace mirror {
 float ComputeRotation(const NormalizedLandmarkList &landmarks,
@@ -138,6 +139,43 @@ std::vector<Point2f> getInputRegion(int in_w, int in_h, int out_w, int out_h, Ro
 
 float sigmoid(float x) {
   return static_cast<float>(1.f / (1.f + exp(-x)));
+}
+
+float getIouOfObjects(const ObjectInfo &a, const ObjectInfo &b) {
+  float xmin = MAX_(a.tl.x, b.tl.x);
+  float ymin = MAX_(a.tl.y, b.tl.y);
+  float xmax = MIN_(a.br.x, b.br.x);
+  float ymax = MIN_(a.br.y, b.br.y);
+
+  float width = MAX_(0.0f, xmax - xmin);
+  float height = MAX_(0.0f, ymax - ymin);
+  float area_inter = width * height;
+  float area_a = (a.br.x - a.tl.x) * (a.br.y - a.tl.y);
+  float area_b = (b.br.x - b.tl.x) * (b.br.y - b.tl.y);
+
+  float iou = area_inter / (area_a + area_b - area_inter);
+  return (iou >= 0.0f ? iou : 0.0f);
+}
+
+void NMSObjects(std::vector<ObjectInfo> &objects, float iou_thresh) {
+  std::sort(objects.begin(), objects.end(), [](const ObjectInfo &a, const ObjectInfo &b) {
+    return a.score > b.score;
+  });
+  std::vector<bool> delete_flag(objects.size(), false);
+  for (size_t i = 0; i < objects.size(); ++i) {
+    if (delete_flag[i]) continue;
+    for (size_t j = i + 1; j < objects.size(); ++j) {
+      float iou = getIouOfObjects(objects[i], objects[j]);
+      if (iou > iou_thresh) delete_flag[j] = true;
+    }
+  }
+
+  std::vector<ObjectInfo> result;
+  for (size_t i = 0; i < objects.size(); ++i) {
+    if (delete_flag[i]) continue;
+    result.emplace_back(objects[i]);
+  }
+  objects = result;
 }
 
 } // namespace mirror

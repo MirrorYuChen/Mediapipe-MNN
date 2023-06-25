@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:31
- * @LastEditTime: 2023-06-21 09:58:27
+ * @LastEditTime: 2023-06-25 10:59:26
  * @Description: utils module
  * @FilePath: \Mediapipe-Hand\source\Utils.h
  */
@@ -41,4 +41,7 @@ int NormalizedLandmarkListToRect(const NormalizedLandmarkList &landmarks,
 std::vector<Point2f> getInputRegion(int in_w, int in_h, int out_w, int out_h, RotateType type);
 
 float sigmoid(float x);
+
+float getIouOfObjects(const ObjectInfo &a, const ObjectInfo &b);
+void NMSObjects(std::vector<ObjectInfo> &objects, float iou_thresh);
 } // namespace mirror
