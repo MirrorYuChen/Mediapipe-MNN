@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:31
- * @LastEditTime: 2023-06-25 10:59:26
+ * @LastEditTime: 2023-06-25 11:17:19
  * @Description: utils module
  * @FilePath: \Mediapipe-Hand\source\Utils.h
  */
@@ -21,18 +21,12 @@ namespace mirror {
 
 // Indices within the partial landmarks.
 constexpr int kWristJoint = 0;
-constexpr int kMiddleFingerJoint = 6;
-constexpr int kIndexFingerJoint = 4;
-constexpr int kRingFingerJoint = 8;
+constexpr int kMiddleFingerJoint = 2;
 constexpr int kNumLandmarks = 21;
 constexpr float kTargetAngle = M_PI * 0.5f;
 
-inline float NormalizeRadians(float angle) {
-  return angle - 2 * M_PI * std::floor((angle - (-M_PI)) / (2 * M_PI));
-}
-
-float ComputeRotation(const NormalizedLandmarkList &landmarks,
-                      const std::pair<int, int> &image_size);
+float NormalizeRadians(float angle);
+float ComputeRotation(const ObjectInfo &object);
 
 int NormalizedLandmarkListToRect(const NormalizedLandmarkList &landmarks,
                                  const std::pair<int, int> &image_size,

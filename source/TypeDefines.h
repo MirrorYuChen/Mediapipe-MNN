@@ -36,6 +36,7 @@ struct ObjectInfo {
     Point2f br;
     Point2f landmarks[7];
     float score;
+    float rotation;
 };
 
 enum PixelFormat {

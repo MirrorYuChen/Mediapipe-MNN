@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-06-25 11:07:58
+ * @LastEditTime: 2023-06-25 11:21:48
  * @Description: utils module
  * @FilePath: \Mediapipe-Hand\source\Utils.cc
  */
@@ -10,19 +10,15 @@
 #include <algorithm>
 
 namespace mirror {
-float ComputeRotation(const NormalizedLandmarkList &landmarks,
-                      const std::pair<int, int> &image_size) {
-  const float x0 = landmarks[kWristJoint].x * image_size.first;
-  const float y0 = landmarks[kWristJoint].y * image_size.second;
+float NormalizeRadians(float angle) {
+  return angle - 2 * M_PI * std::floor((angle - (-M_PI)) / (2 * M_PI));
+}
 
-  float x1 =
-      (landmarks[kIndexFingerJoint].x + landmarks[kRingFingerJoint].x) /
-      2.f;
-  float y1 =
-      (landmarks[kIndexFingerJoint].y + landmarks[kRingFingerJoint].y) /
-      2.f;
-  x1 = (x1 + landmarks[kMiddleFingerJoint].x) / 2.f * image_size.first;
-  y1 = (y1 + landmarks[kMiddleFingerJoint].y) / 2.f * image_size.second;
+float ComputeRotation(const ObjectInfo &object) {
+  const float x0 = object.landmarks[kWristJoint].x;
+  const float y0 = object.landmarks[kWristJoint].y;
+  const float x1 = object.landmarks[kMiddleFingerJoint].x;
+  const float y1 = object.landmarks[kMiddleFingerJoint].y;
 
   const float rotation =
       NormalizeRadians(kTargetAngle - std::atan2(-(y1 - y0), x1 - x0));
@@ -32,6 +28,7 @@ float ComputeRotation(const NormalizedLandmarkList &landmarks,
 int NormalizedLandmarkListToRect(const NormalizedLandmarkList &landmarks,
                                  const std::pair<int, int> &image_size,
                                  NormalizedRect &rect) {
+#if 0
   const float rotation = ComputeRotation(landmarks, image_size);
   const float reverse_angle = NormalizeRadians(-rotation);
 
@@ -87,7 +84,7 @@ int NormalizedLandmarkListToRect(const NormalizedLandmarkList &landmarks,
   rect.w = width;
   rect.h = height;
   rect.h = rotation;
-
+ #endif
   return 0;
 }
 

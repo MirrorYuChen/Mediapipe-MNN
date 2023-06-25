@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
- * @Date: 2023-06-19 17:20:56
- * @LastEditTime: 2023-06-25 11:08:37
- * @Description: palm detector
- * @FilePath: \Mediapipe-Hand\source\PalmDetector.h
+ * @Date: 2023-06-25 11:10:57
+ * @LastEditTime: 2023-06-25 11:34:47
+ * @Description: landmark detector module
+ * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.h
  */
 #pragma once
 
@@ -16,18 +16,16 @@
 #include <MNN/Tensor.hpp>
 
 namespace mirror {
-class PalmDetector {
+class LandmarkerDetector {
 public:
-  PalmDetector() = default;
-  ~PalmDetector();
+  LandmarkerDetector();
+  ~LandmarkerDetector();
 
   bool LoadModel(const char *model_file);
   void setSourceFormat(int format);
-  bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
-  
-private:
-  void ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
-                    std::vector<ObjectInfo> &objects);
+  void setInputSize(int in_w, int in_h, RotateType type);
+  bool Detect(const ImageHead &in, RotateType type, std::vector<Point2f> &landmarks);
+
 
 private:
   bool inited_ = false;
@@ -38,11 +36,11 @@ private:
   MNN::Session *sess_ = nullptr;
   MNN::Tensor *input_tensor_ = nullptr;
   MNN::CV::Matrix trans_;
-  float score_thresh_ = 0.6f;
 
   const float meanVals_[3] = {0.0f, 0.0f, 0.0f};
   const float normVals_[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};
-  const float iouThreshold_ = 0.5f;
 };
 
+
 } // namespace mirror
+

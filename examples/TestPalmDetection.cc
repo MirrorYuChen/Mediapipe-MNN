@@ -33,7 +33,6 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   detector.setSourceFormat(in.pixel_format);
-  detector.setInputSize(in.width, in.height, type);
 
   std::vector<ObjectInfo> objects;
   detector.Detect(in, type, objects);
@@ -46,6 +45,10 @@ int main(int argc, char *argv[]) {
           image,
           cv::Point((int)object.landmarks[i].x, (int)object.landmarks[i].y), 2,
           cv::Scalar(0, 255, 0));
+      cv::putText(
+          image, std::to_string(i),
+          cv::Point((int)object.landmarks[i].x, (int)object.landmarks[i].y), 1,
+          1.0, cv::Scalar(0, 255, 0));
     }
   }
   cv::imshow("result", image);
