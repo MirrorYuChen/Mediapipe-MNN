@@ -43,21 +43,22 @@ int main(int argc, char *argv[]) {
 
   landmarker.setSourceFormat(in.pixel_format);
   landmarker.Detect(in, type, objects);
+  int m = 0;
   for (const auto &object : objects) {
     cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
                   cv::Point2f(object.br.x, object.br.y),
                   cv::Scalar(255, 0, 255), 2);
-    cv::putText(image, std::to_string(object.left_right),
+    cv::putText(image, std::to_string(m),
                 cv::Point2f(object.tl.x, object.tl.y), 1, 1.0,
                 cv::Scalar(255, 0, 255));
-    for (int i = 0; i < 7; ++i) {
-      cv::circle(
-          image,
-                 cv::Point((int)object.index_landmarks[i].x,
-                           (int)object.index_landmarks[i].y),
-                 2,
-          cv::Scalar(0, 255, 0));
+    for (int i = 0; i < 21; ++i) {
+      cv::Point pt = cv::Point(
+        (int)object.landmarks[i].x,
+        (int)object.landmarks[i].y
+      );
+      cv::circle(image, pt, 2, cv::Scalar(0, 255, 0));
     }
+    m++;
   }
 
 

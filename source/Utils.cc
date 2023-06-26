@@ -104,4 +104,22 @@ void NMSObjects(std::vector<ObjectInfo> &objects, float iou_thresh) {
   objects = result;
 }
 
+float RotateTypeToAngle(RotateType type) {
+  float angle = 0.0f;
+  switch (type) {
+    case RotateType::CLOCKWISE_ROTATE_0:
+      break;
+    case RotateType::CLOCKWISE_ROTATE_90:
+      angle = 90.0f;
+      break;
+    case RotateType::CLOCKWISE_ROTATE_180:
+      angle = 180.0f;
+      break;
+    case RotateType::CLOCKWISE_ROTATE_270:
+      angle = 270.0f;
+      break;
+  }
+  return angle;
+}
+
 } // namespace mirror

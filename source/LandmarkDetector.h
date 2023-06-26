@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:10:57
- * @LastEditTime: 2023-06-25 12:39:11
+ * @LastEditTime: 2023-06-25 17:52:58
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.h
  */
@@ -23,8 +23,14 @@ public:
 
   bool LoadModel(const char *model_file);
   void setSourceFormat(int format);
-  void setInputSize(int in_w, int in_h, RotateType type);
   bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
+
+private:
+  float getAlignAngle(const ImageHead &in, RotateType type,
+                      const ObjectInfo &object);
+
+  std::vector<Point2f> getPointRegion(const ImageHead &in, RotateType type,
+                                      const ObjectInfo &object);
 
 private:
   bool inited_ = false;

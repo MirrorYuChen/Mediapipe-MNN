@@ -30,4 +30,6 @@ float sigmoid(float x);
 
 float getIouOfObjects(const ObjectInfo &a, const ObjectInfo &b);
 void NMSObjects(std::vector<ObjectInfo> &objects, float iou_thresh);
+
+float RotateTypeToAngle(RotateType type);
 } // namespace mirror

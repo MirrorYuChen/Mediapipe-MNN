@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-06-25 17:50:28
+ * @LastEditTime: 2023-06-26 12:42:22
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
@@ -86,8 +86,7 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   };
   trans_.setPolyToPoly((CV::Point *)points_dst, (CV::Point *)points_src, 4);
   pretreat_->setMatrix(trans_);
-  pretreat_->convert((uint8_t *)in.data, width, height, in.width_step,
-                     input_tensor_);
+  pretreat_->convert((uint8_t *)in.data, width, height, in.width_step, input_tensor_);
 
   // 2.do inference
   int ret = net_->runSession(sess_);
@@ -111,11 +110,6 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   regressor->copyToHostTensor(output_regressor.get());
 
   // 4.parse the result
-  // printf("classify nchw: %d x %d x %d x %d.\n", output_classify->batch(),
-  // output_classify->channel(), output_classify->height(),
-  // output_classify->width()); printf("regression nchw: %d x %d x %d x %d.\n",
-  // output_regressor->batch(), output_regressor->channel(),
-  // output_regressor->height(), output_regressor->width());
   ParseOutputs(output_classify.get(), output_regressor.get(), objects);
   NMSObjects(objects, iouThreshold_);
 

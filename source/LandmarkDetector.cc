@@ -1,14 +1,14 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:11:06
- * @LastEditTime: 2023-06-25 17:27:07
+ * @LastEditTime: 2023-06-26 12:42:16
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.cc
  */
 #include "LandmarkDetector.h"
-#include <iostream>
-#include <cfloat>
 #include "Utils.h"
+#include <cfloat>
+#include <iostream>
 
 namespace mirror {
 using namespace MNN;
@@ -18,7 +18,7 @@ LandmarkerDetector::~LandmarkerDetector() {
 }
 
 bool LandmarkerDetector::LoadModel(const char *model_file) {
-std::cout << "Start load model." << std::endl;
+  std::cout << "Start load model." << std::endl;
   // 1.load model
   net_ = std::unique_ptr<Interpreter>(Interpreter::createFromFile(model_file));
   if (net_ == nullptr) {
@@ -32,7 +32,7 @@ std::cout << "Start load model." << std::endl;
   schedule_config.numThread = 4;
   sess_ = net_->createSession(schedule_config);
   input_tensor_ = net_->getSessionInput(sess_, nullptr);
-  
+
   input_h_ = input_tensor_->height();
   input_w_ = input_tensor_->width();
 
@@ -50,28 +50,79 @@ void LandmarkerDetector::setSourceFormat(int format) {
   image_process_config.wrap = CV::ZERO;
   memcpy(image_process_config.mean, meanVals_, sizeof(meanVals_));
   memcpy(image_process_config.normal, normVals_, sizeof(normVals_));
-  pretreat_ = std::shared_ptr<CV::ImageProcess>(CV::ImageProcess::create(image_process_config));
+  pretreat_ = std::shared_ptr<CV::ImageProcess>(
+      CV::ImageProcess::create(image_process_config));
 }
 
-void LandmarkerDetector::setInputSize(int in_w, int in_h, RotateType type) {
-  std::vector<Point2f> input_region = getInputRegion(in_w, in_h, input_w_, input_h_, type);
-  float points_src[] = {
-    input_region[0].x, input_region[0].y,
-    input_region[1].x, input_region[1].y,
-    input_region[2].x, input_region[2].y,
-    input_region[3].x, input_region[3].y,
-  };
-  float points_dst[] = {
-    0.0f, 0.0f,
-    0.0f, (float)(input_h_ - 1),
-    (float)(input_w_ - 1), 0.0f,
-    (float)(input_w_ - 1), (float)(input_h_ - 1),
-  };
-  trans_.setPolyToPoly((CV::Point*)points_dst, (CV::Point*)points_src, 4);
-  pretreat_->setMatrix(trans_);
+float LandmarkerDetector::getAlignAngle(const ImageHead &in, RotateType type,
+                                        const ObjectInfo &object) {
+  int width = in.width;
+  int height = in.height;
+  Point2f src = object.index_landmarks[0];
+  Point2f dst = object.index_landmarks[2];
+  CV::Matrix trans;
+  trans.preRotate(RotateTypeToAngle(type), 0.5f * width, 0.5f * height);
+  Point2f src_align, dst_align;
+  src_align.x = trans[0] * src.x + trans[1] * src.y + trans[2];
+  src_align.y = trans[3] * src.x + trans[4] * src.y + trans[5];
+
+  dst_align.x = trans[0] * dst.x + trans[1] * dst.y + trans[2];
+  dst_align.y = trans[3] * dst.x + trans[4] * dst.y + trans[5];
+
+  float dx = dst_align.x - src_align.x;
+  float dy = dst_align.y - src_align.y;
+  return (90.0f - std::atan2(-dy, dx) * 180.0f / M_PI);
 }
 
-bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects) {
+std::vector<Point2f>
+LandmarkerDetector::getPointRegion(const ImageHead &in, RotateType type,
+                                   const ObjectInfo &object) {
+  int width = in.width;
+  int height = in.height;
+  // 1.align the image
+  float init_angle = getAlignAngle(in, type, object);
+  float angle = RotateTypeToAngle(type) + init_angle;
+
+  // 2.get the align region
+  CV::Matrix trans;
+  trans.postRotate(angle, 0.5f * width, 0.5f * height);
+  float rect_width = object.br.x - object.tl.x;
+  float rect_height = object.br.y - object.tl.y;
+
+  Point2f center;
+  center.x = 0.5f * (object.br.x + object.tl.x);
+  center.y = 0.5f * (object.br.y + object.tl.y);
+  float center_x = trans[0] * center.x + trans[1] * center.y + trans[2];
+  float center_y = trans[3] * center.x + trans[4] * center.y + trans[5];
+
+  // 3. expand the region
+  float half_max_side = MAX_(rect_width, rect_height) * 1.3f;
+  float xmin = center_x - half_max_side;
+  float ymin = center_y - half_max_side;
+  float xmax = center_x + half_max_side;
+  float ymax = center_y + half_max_side;
+
+  std::vector<Point2f> region(4);
+  region[0].x = xmin;
+  region[0].y = ymin;
+  region[1].x = xmin;
+  region[1].y = ymax;
+  region[2].x = xmax;
+  region[2].y = ymin;
+  region[3].x = xmax;
+  region[3].y = ymax;
+
+  std::vector<Point2f> result(4);
+  trans.invert(&trans);
+  for (size_t i = 0; i < region.size(); ++i) {
+    result[i].x = trans[0] * region[i].x + trans[1] * region[i].y + trans[2];
+    result[i].y = trans[3] * region[i].x + trans[4] * region[i].y + trans[5];
+  }
+  return result;
+}
+
+bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type,
+                                std::vector<ObjectInfo> &objects) {
   std::cout << "Start detect." << std::endl;
   if (in.data == nullptr) {
     std::cout << "Error Input empty." << std::endl;
@@ -85,81 +136,19 @@ bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type, std::vecto
   int width = in.width;
   int height = in.height;
   for (auto &object : objects) {
-    float angle = object.rotation;
-    switch (type) {
-    case RotateType::CLOCKWISE_ROTATE_90:
-      angle += 90.0f;
-      break;
-    case RotateType::CLOCKWISE_ROTATE_180:
-      angle += 180.0f;
-      break;
-    case RotateType::CLOCKWISE_ROTATE_270:
-      angle += 270.0f;
-      break;    
-    default:
-      break;
-    }
-    // 1.1 rotate region
-    CV::Matrix trans;
-    trans.postRotate(angle, 0.5f * width, 0.5f * height);
-    std::vector<Point2f> region(4), rotated_region(4);
-    Point2f center, rotated_center;
-    region[0] = object.tl, region[3] = object.br;
-    region[1].x = region[0].x, region[1].y = region[3].y;
-    region[2].x = region[2].x, region[2].y = region[0].y;
-    center.x = 0.5f * (region[0].x + region[3].x);
-    center.y = 0.5f * (region[0].y + region[3].y);
-    float xmin = FLT_MAX;
-    float ymin = FLT_MAX;
-    float xmax = FLT_MIN;
-    float ymax = FLT_MIN;
-    rotated_center.x = trans[0] * center.x + trans[1] * center.y + trans[2];
-    rotated_center.y = trans[3] * center.x + trans[4] * center.y + trans[5];
-    for (int i = 0; i < 4; ++i) {
-      rotated_region[i].x = trans[0] * region[i].x + trans[1] * region[i].y + trans[2];
-      rotated_region[i].y = trans[3] * region[i].x + trans[4] * region[i].y + trans[5];
-      xmin = MIN_(rotated_region[i].x, xmin);
-      ymin = MIN_(rotated_region[i].y, ymin);
-      xmax = MAX_(rotated_region[i].x, xmax);
-      ymax = MAX_(rotated_region[i].y, ymax);
-    }
-
-    // 1.2 get width and height;
-    float region_width = xmax - xmin;
-    float region_height = ymax - ymin;
-    float max_side = 2.6f * MAX_(region_width, region_height);
-    region[0].x = rotated_center.x - 0.5f * region_width;
-    region[0].y = rotated_center.y - 0.5f * region_height;
-    region[1].x = rotated_center.x - 0.5f * region_width;
-    region[1].y = rotated_center.y + 0.5f * region_height;
-    region[2].x = rotated_center.x + 0.5f * region_width;
-    region[2].y = rotated_center.y - 0.5f * region_height;
-    region[3].x = rotated_center.x + 0.5f * region_width;
-    region[3].y = rotated_center.y + 0.5f * region_height;
-
-    // 1.3 get the origin region
-    trans.invert(&trans);
-    for (int i = 0; i < 4; ++i) {
-      rotated_region[i].x = trans[0] * region[i].x + trans[1] * region[i].y + trans[2];
-      rotated_region[i].y = trans[3] * region[i].x + trans[4] * region[i].y + trans[5];
-    }
-
+    std::vector<Point2f> region = getPointRegion(in, type, object);
     float points_src[] = {
-      rotated_region[0].x, rotated_region[0].y,
-      rotated_region[1].x, rotated_region[1].y,
-      rotated_region[2].x, rotated_region[2].y,
-      rotated_region[3].x, rotated_region[3].y,
+      region[0].x, region[0].y, region[1].x, region[1].y,
+      region[2].x, region[2].y, region[3].x, region[3].y,
     };
     float points_dst[] = {
-      0.0f, 0.0f,
-      0.0f, (float)(input_h_ - 1),
+      0.0f,  0.0f,
+      0.0f,  (float)(input_h_ - 1),
       (float)(input_w_ - 1), 0.0f,
       (float)(input_w_ - 1), (float)(input_h_ - 1),
     };
-    trans_.setPolyToPoly((CV::Point*)points_dst, (CV::Point*)points_src, 4);
+    trans_.setPolyToPoly((CV::Point *)points_dst, (CV::Point *)points_src, 4);
     pretreat_->setMatrix(trans_);
-
-    // 1.4 set the input
     pretreat_->convert((uint8_t *)in.data, width, height, in.width_step, input_tensor_);
 
     // 1.5.do inference
@@ -176,13 +165,13 @@ bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type, std::vecto
     MNN::Tensor *landmark_world = net_->getSessionOutput(sess_, "Identity_3");
 
     std::shared_ptr<MNN::Tensor> output_left_right(
-      new MNN::Tensor(left_right, left_right->getDimensionType()));
+        new MNN::Tensor(left_right, left_right->getDimensionType()));
     std::shared_ptr<MNN::Tensor> output_palm_score(
-      new MNN::Tensor(palm_score, palm_score->getDimensionType()));
+        new MNN::Tensor(palm_score, palm_score->getDimensionType()));
     std::shared_ptr<MNN::Tensor> output_landmark_norm(
-      new MNN::Tensor(landmark_norm, landmark_norm->getDimensionType()));
+        new MNN::Tensor(landmark_norm, landmark_norm->getDimensionType()));
     std::shared_ptr<MNN::Tensor> output_landmark_world(
-      new MNN::Tensor(landmark_world, landmark_world->getDimensionType()));
+        new MNN::Tensor(landmark_world, landmark_world->getDimensionType()));
 
     left_right->copyToHostTensor(output_left_right.get());
     palm_score->copyToHostTensor(output_palm_score.get());
@@ -207,15 +196,20 @@ bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type, std::vecto
           trans_[3] * landmarks[i].x + trans_[4] * landmarks[i].y + trans_[5];
     }
 
-
-    //printf("left right: nchw: %d, %d, %d, %d.\n", output_left_right->batch(), output_left_right->channel(), output_left_right->height(), output_left_right->width());
-    //printf("palm score: nchw: %d, %d, %d, %d.\n", output_palm_score->batch(), output_palm_score->channel(), output_palm_score->height(), output_palm_score->width());
-    //printf("output landmark normalize: nchw: %d, %d, %d, %d.\n", output_landmark_norm->batch(), output_landmark_norm->channel(), output_landmark_norm->height(), output_landmark_norm->width());
-    //printf("output landmark: nchw: %d, %d, %d, %d.\n", output_landmark_world->batch(), output_landmark_world->channel(), output_landmark_world->height(), output_landmark_world->width());
+    // printf("left right: nchw: %d, %d, %d, %d.\n", output_left_right->batch(),
+    // output_left_right->channel(), output_left_right->height(),
+    // output_left_right->width()); printf("palm score: nchw: %d, %d, %d,
+    // %d.\n", output_palm_score->batch(), output_palm_score->channel(),
+    // output_palm_score->height(), output_palm_score->width()); printf("output
+    // landmark normalize: nchw: %d, %d, %d, %d.\n",
+    // output_landmark_norm->batch(), output_landmark_norm->channel(),
+    // output_landmark_norm->height(), output_landmark_norm->width());
+    // printf("output landmark: nchw: %d, %d, %d, %d.\n",
+    // output_landmark_world->batch(), output_landmark_world->channel(),
+    // output_landmark_world->height(), output_landmark_world->width());
   }
 
-
+  return true;
 }
-
 
 } // namespace mirror
