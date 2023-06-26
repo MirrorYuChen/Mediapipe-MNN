@@ -58,9 +58,15 @@ int main(int argc, char *argv[]) {
     cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
                   cv::Point2f(object.br.x, object.br.y),
                   cv::Scalar(255, 0, 255), 2);
-    cv::putText(image, std::to_string(m),
-                cv::Point2f(object.tl.x, object.tl.y), 1, 1.0,
-                cv::Scalar(255, 0, 255));
+    if (object.left_right == 1) {
+      cv::putText(image, "left",
+                  cv::Point2f(object.tl.x, object.tl.y), 1, 3.0,
+                  cv::Scalar(255, 0, 255));
+    } else {
+      cv::putText(image, "right", cv::Point2f(object.tl.x, object.tl.y), 1, 3.0,
+                  cv::Scalar(255, 0, 255));
+    }
+    
     for (int i = 0; i < 21; ++i) {
       cv::Point pt = cv::Point(
         (int)object.landmarks[i].x,

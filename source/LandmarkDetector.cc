@@ -71,7 +71,7 @@ float LandmarkerDetector::getAlignAngle(const ImageHead &in, RotateType type,
 
   float dx = dst_align.x - src_align.x;
   float dy = dst_align.y - src_align.y;
-  return (90.0f - std::atan2(-dy, dx) * 180.0f / M_PI);
+  return -(90.0f - std::atan2(-dy, dx) * 180.0f / M_PI);
 }
 
 std::vector<Point2f>
@@ -93,7 +93,7 @@ LandmarkerDetector::getPointRegion(const ImageHead &in, RotateType type,
   center.x = 0.5f * (object.br.x + object.tl.x);
   center.y = 0.5f * (object.br.y + object.tl.y);
   float center_x = trans[0] * center.x + trans[1] * center.y + trans[2];
-  float center_y = trans[3] * center.x + trans[4] * center.y + trans[5];
+  float center_y = trans[3] * center.x + trans[4] * center.y + trans[5] - 0.5f * rect_height;
 
   // 3. expand the region
   float half_max_side = MAX_(rect_width, rect_height) * 1.3f;
