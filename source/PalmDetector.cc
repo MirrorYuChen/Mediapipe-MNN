@@ -74,8 +74,9 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   std::vector<Point2f> input_region =
       getInputRegion(width, height, input_w_, input_h_, type);
   float points_src[] = {
-    input_region[0].x, input_region[0].y, input_region[1].x,
-    input_region[1].y, input_region[2].x, input_region[2].y,
+    input_region[0].x, input_region[0].y,
+    input_region[1].x, input_region[1].y,
+    input_region[2].x, input_region[2].y,
     input_region[3].x, input_region[3].y,
   };
   float points_dst[] = {
@@ -142,7 +143,7 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
     float h = ptr[3];
 
     object.score = score;
-    Point2f tl, br;
+    Point2f tl, br, tl_origin, br_origin;
     tl.x = cx - 0.5f * w;
     tl.y = cy - 0.5f * h;
     br.x = cx + 0.5f * w;
@@ -156,10 +157,14 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
       object.index_landmarks[j].x = trans_[0] * landmark.x + trans_[1] * landmark.y + trans_[2];
       object.index_landmarks[j].y = trans_[3] * landmark.x + trans_[4] * landmark.y + trans_[5];
     }
-    object.tl.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
-    object.tl.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];
-    object.br.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
-    object.br.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
+    tl_origin.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
+    tl_origin.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];
+    br_origin.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
+    br_origin.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
+    object.tl.x = MIN_(tl_origin.x, br_origin.x);
+    object.tl.y = MIN_(tl_origin.y, br_origin.y);
+    object.br.x = MAX_(tl_origin.x, br_origin.x);
+    object.br.y = MAX_(tl_origin.y, br_origin.y);
 
     objects.emplace_back(object);
   }

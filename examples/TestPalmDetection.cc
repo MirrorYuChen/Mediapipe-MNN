@@ -19,6 +19,17 @@ int main(int argc, char *argv[]) {
     std::cout << "failed load image." << std::endl;
     return -1;
   }
+  RotateType type = RotateType::CLOCKWISE_ROTATE_0;
+  // ÄæÊ±Õë90¶È
+  if (type == CLOCKWISE_ROTATE_90) {
+    cv::transpose(image, image);
+  } else if (type == CLOCKWISE_ROTATE_180) {
+    cv::flip(image, image, -1);
+  }
+  if (type == CLOCKWISE_ROTATE_270) {
+    cv::transpose(image, image);
+    cv::flip(image, image, 1);
+  }
   ImageHead in;
   in.data = image.data;
   in.height = image.rows;
@@ -28,7 +39,6 @@ int main(int argc, char *argv[]) {
 
   const char *palm_model_file = "../data/models/palm_detection.mnn";
   const char *landmark_model_file = "../data/models/hand_landmark.mnn";
-  RotateType type = RotateType::CLOCKWISE_ROTATE_0;
   PalmDetector detector;
   LandmarkerDetector landmarker;
   if (!detector.LoadModel(palm_model_file) ||
