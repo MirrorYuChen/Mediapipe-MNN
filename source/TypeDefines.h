@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-06-25 17:46:37
+ * @LastEditTime: 2023-06-27 10:16:40
  * @Description: type defines
  * @FilePath: \Mediapipe-Hand\source\TypeDefines.h
  */
@@ -34,9 +34,8 @@ struct ObjectInfo {
     Point2f tl;
     Point2f br;
     Point2f landmarks[21];
-    Point2f index_landmarks[7];
     float score;
-    float rotation;
+    float angle;
     int left_right;
 };
 

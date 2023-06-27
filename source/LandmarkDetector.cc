@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:11:06
- * @LastEditTime: 2023-06-26 12:42:16
+ * @LastEditTime: 2023-06-27 10:17:07
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.cc
  */
@@ -54,33 +54,13 @@ void LandmarkerDetector::setSourceFormat(int format) {
       CV::ImageProcess::create(image_process_config));
 }
 
-float LandmarkerDetector::getAlignAngle(const ImageHead &in, RotateType type,
-                                        const ObjectInfo &object) {
-  int width = in.width;
-  int height = in.height;
-  Point2f src = object.index_landmarks[0];
-  Point2f dst = object.index_landmarks[2];
-  CV::Matrix trans;
-  trans.preRotate(RotateTypeToAngle(type), 0.5f * width, 0.5f * height);
-  Point2f src_align, dst_align;
-  src_align.x = trans[0] * src.x + trans[1] * src.y + trans[2];
-  src_align.y = trans[3] * src.x + trans[4] * src.y + trans[5];
-
-  dst_align.x = trans[0] * dst.x + trans[1] * dst.y + trans[2];
-  dst_align.y = trans[3] * dst.x + trans[4] * dst.y + trans[5];
-
-  float dx = dst_align.x - src_align.x;
-  float dy = dst_align.y - src_align.y;
-  return -(90.0f - std::atan2(-dy, dx) * 180.0f / M_PI);
-}
-
 std::vector<Point2f>
 LandmarkerDetector::getPointRegion(const ImageHead &in, RotateType type,
                                    const ObjectInfo &object) {
   int width = in.width;
   int height = in.height;
   // 1.align the image
-  float init_angle = getAlignAngle(in, type, object);
+  float init_angle = object.angle;
   float angle = RotateTypeToAngle(type) + init_angle;
 
   // 2.get the align region

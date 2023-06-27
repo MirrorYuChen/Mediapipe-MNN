@@ -26,9 +26,6 @@ public:
   bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
 
 private:
-  float getAlignAngle(const ImageHead &in, RotateType type,
-                      const ObjectInfo &object);
-
   std::vector<Point2f> getPointRegion(const ImageHead &in, RotateType type,
                                       const ObjectInfo &object);
 
