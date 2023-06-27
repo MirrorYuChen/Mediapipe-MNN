@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:11:06
- * @LastEditTime: 2023-06-27 10:17:07
+ * @LastEditTime: 2023-06-27 10:27:00
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.cc
  */
@@ -158,6 +158,9 @@ bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type,
     landmark_norm->copyToHostTensor(output_landmark_norm.get());
     landmark_world->copyToHostTensor(output_landmark_world.get());
 
+    float *palm_score_ptr = output_palm_score->host<float>();
+    if (palm_score_ptr[0] < 0.8f) continue;
+
     float *left_right_ptr = output_left_right->host<float>();
     if (left_right_ptr[0] > 0.5f) {
       object.left_right = 1;
@@ -165,28 +168,16 @@ bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type,
       object.left_right = 0;
     }
 
-    std::vector<Point2f> landmarks(21);
+    Point2f landmark;
     for (int i = 0; i < 21; ++i) {
       float *landmarks_ptr = landmark_norm->host<float>();
-      landmarks[i].x = landmarks_ptr[3 * i + 0];
-      landmarks[i].y = landmarks_ptr[3 * i + 1];
+      landmark.x = landmarks_ptr[3 * i + 0];
+      landmark.y = landmarks_ptr[3 * i + 1];
       object.landmarks[i].x =
-          trans_[0] * landmarks[i].x + trans_[1] * landmarks[i].y + trans_[2];
+          trans_[0] * landmark.x + trans_[1] * landmark.y + trans_[2];
       object.landmarks[i].y =
-          trans_[3] * landmarks[i].x + trans_[4] * landmarks[i].y + trans_[5];
+          trans_[3] * landmark.x + trans_[4] * landmark.y + trans_[5];
     }
-
-    // printf("left right: nchw: %d, %d, %d, %d.\n", output_left_right->batch(),
-    // output_left_right->channel(), output_left_right->height(),
-    // output_left_right->width()); printf("palm score: nchw: %d, %d, %d,
-    // %d.\n", output_palm_score->batch(), output_palm_score->channel(),
-    // output_palm_score->height(), output_palm_score->width()); printf("output
-    // landmark normalize: nchw: %d, %d, %d, %d.\n",
-    // output_landmark_norm->batch(), output_landmark_norm->channel(),
-    // output_landmark_norm->height(), output_landmark_norm->width());
-    // printf("output landmark: nchw: %d, %d, %d, %d.\n",
-    // output_landmark_world->batch(), output_landmark_world->channel(),
-    // output_landmark_world->height(), output_landmark_world->width());
   }
 
   return true;
