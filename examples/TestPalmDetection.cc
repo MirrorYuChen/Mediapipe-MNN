@@ -37,8 +37,8 @@ int main(int argc, char *argv[]) {
   in.width_step = image.step[0];
   in.pixel_format = PixelFormat::BGR;
 
-  const char *palm_model_file = "../data/models/palm_detection.mnn";
-  const char *landmark_model_file = "../data/models/hand_landmark.mnn";
+  const char *palm_model_file = "../data/models/palm_detection_fp16.mnn";
+  const char *landmark_model_file = "../data/models/hand_landmark_fp16.mnn";
   PalmDetector detector;
   LandmarkerDetector landmarker;
   if (!detector.LoadModel(palm_model_file) ||
