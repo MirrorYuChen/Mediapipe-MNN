@@ -67,7 +67,7 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   if (!inited_) {
     std::cout << "Model Uninitialized." << std::endl;
     return false;
-  }
+  }  
   // 1.set input
   int width = in.width;
   int height = in.height;

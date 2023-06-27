@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 15:43:27
- * @LastEditTime: 2023-06-25 15:12:54
+ * @LastEditTime: 2023-06-27 16:25:58
  * @Description: test palm detection
  * @FilePath: \Mediapipe-Hand\examples\TestPalmDetection.cc
  */
@@ -9,6 +9,7 @@
 #include "PalmDetector.h"
 #include "LandmarkDetector.h"
 #include <opencv2/opencv.hpp>
+#include <cmath>
 
 using namespace mirror;
 
@@ -20,7 +21,6 @@ int main(int argc, char *argv[]) {
     return -1;
   }
   RotateType type = RotateType::CLOCKWISE_ROTATE_0;
-  // ÄæÊ±Õë90¶È
   if (type == CLOCKWISE_ROTATE_90) {
     cv::transpose(image, image);
   } else if (type == CLOCKWISE_ROTATE_180) {
@@ -37,8 +37,8 @@ int main(int argc, char *argv[]) {
   in.width_step = image.step[0];
   in.pixel_format = PixelFormat::BGR;
 
-  const char *palm_model_file = "../data/models/palm_detection_fp16.mnn";
-  const char *landmark_model_file = "../data/models/hand_landmark_fp16.mnn";
+  const char *palm_model_file = "../data/models/palm_detection_lite_fp16.mnn";
+  const char *landmark_model_file = "../data/models/hand_landmark_lite_fp16.mnn";
   PalmDetector detector;
   LandmarkerDetector landmarker;
   if (!detector.LoadModel(palm_model_file) ||
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 
 
   cv::imshow("result", image);
-  cv::waitKey(0);
+  cv::waitKey(0);  
 
   return 0;
 }
