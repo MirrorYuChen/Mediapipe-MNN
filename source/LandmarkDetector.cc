@@ -131,6 +131,7 @@ bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type,
     pretreat_->setMatrix(trans_);
     pretreat_->convert((uint8_t *)in.data, width, height, in.width_step, input_tensor_);
 
+
     // 1.5.do inference
     int ret = net_->runSession(sess_);
     if (ret != 0) {

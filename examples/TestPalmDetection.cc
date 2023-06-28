@@ -14,7 +14,7 @@
 using namespace mirror;
 
 int main(int argc, char *argv[]) {
-  const char *image_file = "../data/images/hand.jpg";
+  const char *image_file = "../data/images/hand_demo.jpg";
   cv::Mat image = cv::imread(image_file);
   if (image.empty()) {
     std::cout << "failed load image." << std::endl;
