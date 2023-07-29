@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 15:47:03
- * @LastEditTime: 2023-07-29 17:13:29
+ * @LastEditTime: 2023-07-29 23:21:42
  * @Description: face detector
- * @FilePath: \Mediapipe-Hand\source\FaceDetector.cc
+ * @FilePath: \Mediapipe-MNN\source\FaceDetector.cc
  */
 #include "FaceDetector.h"
 #include "CommonData.h"
@@ -37,6 +37,9 @@ bool FaceDetector::LoadModel(const char *model_file) {
   input_h_ = input_tensor_->height();
   input_w_ = input_tensor_->width();
 
+  cls_name_ = "classificators";
+  reg_name_ = "regressors";
+
   std::cout << "End load model." << std::endl;
   inited_ = true;
   return true;
@@ -53,6 +56,12 @@ void FaceDetector::setSourceFormat(int format) {
   memcpy(image_process_config.normal, normVals_, sizeof(normVals_));
   pretreat_ = std::shared_ptr<CV::ImageProcess>(
       CV::ImageProcess::create(image_process_config));
+}
+
+void FaceDetector::setUseFull() {
+  use_full_ = true;
+  cls_name_ = "Identity_1";
+  reg_name_ = "Identity";
 }
 
 bool FaceDetector::Detect(const ImageHead &in, RotateType type,
@@ -98,8 +107,8 @@ bool FaceDetector::Detect(const ImageHead &in, RotateType type,
   }
 
   // 3.get the result
-  MNN::Tensor *classifier = net_->getSessionOutput(sess_, "classificators");
-  MNN::Tensor *regressor = net_->getSessionOutput(sess_, "regressors");
+  MNN::Tensor *classifier = net_->getSessionOutput(sess_, cls_name_.c_str());
+  MNN::Tensor *regressor = net_->getSessionOutput(sess_, reg_name_.c_str());
   if (nullptr == classifier || nullptr == regressor) {
     std::cout << "Error output." << std::endl;
     return false;
@@ -127,12 +136,17 @@ void FaceDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
   int channel = scores->channel();
   int height = scores->height();
   int width = scores->width();
+  
+  float *anchor_ptr = BLAZE_FACE_ANCHORS;
+  if (use_full_) {
+    anchor_ptr = FULL_BLAZE_FACE_ANCHORS;
+  }
 
   ObjectInfo object;
   for (int i = 0; i < channel; ++i) {
     if (scores_ptr[i] < score_thresh_) continue;
-    float offset_x = BLAZE_FACE_ANCHORS[4 * i + 0] * input_w_;
-    float offset_y = BLAZE_FACE_ANCHORS[4 * i + 1] * input_h_;
+    float offset_x = anchor_ptr[4 * i + 0] * input_w_;
+    float offset_y = anchor_ptr[4 * i + 1] * input_h_;
     float *ptr = boxes_ptr + 16 * i;
 
     float cx = ptr[0] + offset_x;

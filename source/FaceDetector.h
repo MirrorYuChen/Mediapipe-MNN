@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 15:46:48
- * @LastEditTime: 2023-07-29 16:02:07
+ * @LastEditTime: 2023-07-29 23:16:00
  * @Description: face detector module
- * @FilePath: \Mediapipe-Hand\source\FaceDetector.h
+ * @FilePath: \Mediapipe-MNN\source\FaceDetector.h
  */
 #pragma once
 
@@ -24,6 +24,7 @@ public:
 
   bool LoadModel(const char *model_file);
   void setSourceFormat(int format);
+  void setUseFull();
   bool Detect(const ImageHead &in, RotateType type,
               std::vector<ObjectInfo> &objects);
 
@@ -45,6 +46,9 @@ private:
   const float meanVals_[3] = {127.5f, 127.5f, 127.5f};
   const float normVals_[3] = {1 / 127.5f, 1 / 127.5f, 1 / 127.5f};
   const float iouThreshold_ = 0.5f;
+  bool use_full_ = false;
+  std::string cls_name_;
+  std::string reg_name_;
 };
 
 } // namespace mirror

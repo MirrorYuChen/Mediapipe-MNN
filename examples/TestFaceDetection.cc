@@ -36,13 +36,14 @@ int main(int argc, char *argv[]) {
   in.width_step = image.step[0];
   in.pixel_format = PixelFormat::BGR;
 
-  const char *face_model_file = "../data/models/face_detection_short_range_fp16.mnn";
+  const char *face_model_file = "../data/models/face_detection_full_range_sparse_fp16.mnn";
   FaceDetector detector;
   if (!detector.LoadModel(face_model_file)) {
     std::cout << "Failed load model." << std::endl;
     return -1;
   }
   detector.setSourceFormat(in.pixel_format);
+  detector.setUseFull();
 
   std::vector<ObjectInfo> objects;
   detector.Detect(in, type, objects);
