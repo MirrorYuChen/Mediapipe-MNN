@@ -1,23 +1,23 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:11:06
- * @LastEditTime: 2023-06-27 10:27:00
+ * @LastEditTime: 2023-07-29 15:44:34
  * @Description: landmark detector module
- * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.cc
+ * @FilePath: \Mediapipe-Hand\source\PalmLandmarkDetector.cc
  */
-#include "LandmarkDetector.h"
+#include "PalmLandmarkDetector.h"
 #include "Utils.h"
 #include <cfloat>
 #include <iostream>
 
 namespace mirror {
 using namespace MNN;
-LandmarkerDetector::~LandmarkerDetector() {
+PalmLandmarkDetector::~PalmLandmarkDetector() {
   net_->releaseModel();
   net_->releaseSession(sess_);
 }
 
-bool LandmarkerDetector::LoadModel(const char *model_file) {
+bool PalmLandmarkDetector::LoadModel(const char *model_file) {
   std::cout << "Start load model." << std::endl;
   // 1.load model
   net_ = std::unique_ptr<Interpreter>(Interpreter::createFromFile(model_file));
@@ -41,7 +41,7 @@ bool LandmarkerDetector::LoadModel(const char *model_file) {
   return true;
 }
 
-void LandmarkerDetector::setSourceFormat(int format) {
+void PalmLandmarkDetector::setSourceFormat(int format) {
   // create image process
   CV::ImageProcess::Config image_process_config;
   image_process_config.filterType = CV::BILINEAR;
@@ -55,7 +55,7 @@ void LandmarkerDetector::setSourceFormat(int format) {
 }
 
 std::vector<Point2f>
-LandmarkerDetector::getPointRegion(const ImageHead &in, RotateType type,
+PalmLandmarkDetector::getPointRegion(const ImageHead &in, RotateType type,
                                    const ObjectInfo &object) {
   int width = in.width;
   int height = in.height;
@@ -101,7 +101,7 @@ LandmarkerDetector::getPointRegion(const ImageHead &in, RotateType type,
   return result;
 }
 
-bool LandmarkerDetector::Detect(const ImageHead &in, RotateType type,
+bool PalmLandmarkDetector::Detect(const ImageHead &in, RotateType type,
                                 std::vector<ObjectInfo> &objects) {
   std::cout << "Start detect." << std::endl;
   if (in.data == nullptr) {

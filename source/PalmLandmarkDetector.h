@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:10:57
- * @LastEditTime: 2023-06-25 17:52:58
+ * @LastEditTime: 2023-07-29 15:39:42
  * @Description: landmark detector module
- * @FilePath: \Mediapipe-Hand\source\LandmarkDetector.h
+ * @FilePath: \Mediapipe-Hand\source\PalmLandmarkDetector.h
  */
 #pragma once
 
@@ -16,10 +16,10 @@
 #include <MNN/Tensor.hpp>
 
 namespace mirror {
-class LandmarkerDetector {
+class PalmLandmarkDetector {
 public:
-  LandmarkerDetector() = default;
-  ~LandmarkerDetector();
+  PalmLandmarkDetector() = default;
+  ~PalmLandmarkDetector();
 
   bool LoadModel(const char *model_file);
   void setSourceFormat(int format);

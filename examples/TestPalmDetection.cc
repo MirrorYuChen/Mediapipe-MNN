@@ -1,13 +1,13 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 15:43:27
- * @LastEditTime: 2023-06-27 16:25:58
+ * @LastEditTime: 2023-07-29 15:40:28
  * @Description: test palm detection
  * @FilePath: \Mediapipe-Hand\examples\TestPalmDetection.cc
  */
 #include "TypeDefines.h"
 #include "PalmDetector.h"
-#include "LandmarkDetector.h"
+#include "PalmLandmarkDetector.h"
 #include <opencv2/opencv.hpp>
 #include <cmath>
 
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
   const char *palm_model_file = "../data/models/palm_detection_lite_fp16.mnn";
   const char *landmark_model_file = "../data/models/hand_landmark_lite_fp16.mnn";
   PalmDetector detector;
-  LandmarkerDetector landmarker;
+  PalmLandmarkDetector landmarker;
   if (!detector.LoadModel(palm_model_file) ||
       !landmarker.LoadModel(landmark_model_file)) {
     std::cout << "Failed load model." << std::endl;
