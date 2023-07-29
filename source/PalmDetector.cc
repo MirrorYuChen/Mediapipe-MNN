@@ -97,21 +97,21 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   }
 
   // 3.get the result
-  MNN::Tensor *classify = net_->getSessionOutput(sess_, "classificators");
+  MNN::Tensor *classifier = net_->getSessionOutput(sess_, "classificators");
   MNN::Tensor *regressor = net_->getSessionOutput(sess_, "regressors");
-  if (nullptr == classify || nullptr == regressor) {
+  if (nullptr == classifier || nullptr == regressor) {
     std::cout << "Error output." << std::endl;
     return false;
   }
-  std::shared_ptr<MNN::Tensor> output_classify(
-      new MNN::Tensor(classify, classify->getDimensionType()));
+  std::shared_ptr<MNN::Tensor> output_classifier(
+      new MNN::Tensor(classifier, classifier->getDimensionType()));
   std::shared_ptr<MNN::Tensor> output_regressor(
       new MNN::Tensor(regressor, regressor->getDimensionType()));
-  classify->copyToHostTensor(output_classify.get());
+  classifier->copyToHostTensor(output_classifier.get());
   regressor->copyToHostTensor(output_regressor.get());
 
   // 4.parse the result
-  ParseOutputs(output_classify.get(), output_regressor.get(), objects);
+  ParseOutputs(output_classifier.get(), output_regressor.get(), objects);
   NMSObjects(objects, iouThreshold_);
 
   std::cout << "End detect." << std::endl;
