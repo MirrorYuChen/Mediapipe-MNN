@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:11:06
- * @LastEditTime: 2023-07-29 15:44:34
+ * @LastEditTime: 2023-07-29 17:01:55
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-Hand\source\PalmLandmarkDetector.cc
  */
@@ -170,14 +170,13 @@ bool PalmLandmarkDetector::Detect(const ImageHead &in, RotateType type,
     }
 
     Point2f landmark;
+    object.landmarks.resize(21);
     for (int i = 0; i < 21; ++i) {
       float *landmarks_ptr = landmark_norm->host<float>();
       landmark.x = landmarks_ptr[3 * i + 0];
       landmark.y = landmarks_ptr[3 * i + 1];
-      object.landmarks[i].x =
-          trans_[0] * landmark.x + trans_[1] * landmark.y + trans_[2];
-      object.landmarks[i].y =
-          trans_[3] * landmark.x + trans_[4] * landmark.y + trans_[5];
+      object.landmarks[i].x = trans_[0] * landmark.x + trans_[1] * landmark.y + trans_[2];
+      object.landmarks[i].y = trans_[3] * landmark.x + trans_[4] * landmark.y + trans_[5];
     }
   }
 

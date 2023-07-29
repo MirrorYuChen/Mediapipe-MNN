@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-07-29 16:21:49
+ * @LastEditTime: 2023-07-29 16:51:05
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
@@ -159,6 +159,15 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
     float dx = dst.x - src.x;
     float dy = dst.y - src.y;
     object.angle = -(90.0f - std::atan2(-dy, dx) * 180.0f / M_PI);
+
+    object.index_landmarks.resize(7);
+    Point2f pt;
+    for (int k = 0; k < 7; ++k) {      
+      pt.x = ptr[4 + 2 * k + 0] + offset_x;
+      pt.y = ptr[4 + 2 * k + 1] + offset_y;
+      object.index_landmarks[k].x = trans_[0] * pt.x + trans_[1] * pt.y + trans_[2];
+      object.index_landmarks[k].y = trans_[3] * pt.x + trans_[4] * pt.y + trans_[5];
+    }
     
     tl_origin.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
     tl_origin.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];

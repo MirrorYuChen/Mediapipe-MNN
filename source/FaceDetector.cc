@@ -1,13 +1,15 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 15:47:03
- * @LastEditTime: 2023-07-29 16:23:01
+ * @LastEditTime: 2023-07-29 17:13:29
  * @Description: face detector
  * @FilePath: \Mediapipe-Hand\source\FaceDetector.cc
  */
 #include "FaceDetector.h"
+#include "CommonData.h"
 #include "Utils.h"
 #include <iostream>
+
 
 namespace mirror {
 using namespace MNN;
@@ -72,19 +74,16 @@ bool FaceDetector::Detect(const ImageHead &in, RotateType type,
   std::vector<Point2f> input_region =
       getInputRegion(width, height, input_w_, input_h_, type);
   float points_src[] = {
-      input_region[0].x, input_region[0].y, input_region[1].x,
-      input_region[1].y, input_region[2].x, input_region[2].y,
-      input_region[3].x, input_region[3].y,
+    input_region[0].x, input_region[0].y, 
+    input_region[1].x, input_region[1].y,
+    input_region[2].x, input_region[2].y,
+    input_region[3].x, input_region[3].y,
   };
   float points_dst[] = {
-      0.0f,
-      0.0f,
-      0.0f,
-      (float)(input_h_ - 1),
-      (float)(input_w_ - 1),
-      0.0f,
-      (float)(input_w_ - 1),
-      (float)(input_h_ - 1),
+    0.0f,  0.0f,
+    0.0f,  (float)(input_h_ - 1),
+    (float)(input_w_ - 1), 0.0f,
+    (float)(input_w_ - 1), (float)(input_h_ - 1),
   };
   trans_.setPolyToPoly((CV::Point *)points_dst, (CV::Point *)points_src, 4);
   pretreat_->setMatrix(trans_);
@@ -105,12 +104,17 @@ bool FaceDetector::Detect(const ImageHead &in, RotateType type,
     std::cout << "Error output." << std::endl;
     return false;
   }
-  std::shared_ptr<MNN::Tensor> output_classifier(
-      new MNN::Tensor(classifier, classifier->getDimensionType()));
-  std::shared_ptr<MNN::Tensor> output_regressor(
-      new MNN::Tensor(regressor, regressor->getDimensionType()));
+  std::shared_ptr<MNN::Tensor> output_classifier(new MNN::Tensor(classifier, classifier->getDimensionType()));
+  std::shared_ptr<MNN::Tensor> output_regressor(new MNN::Tensor(regressor, regressor->getDimensionType()));
   classifier->copyToHostTensor(output_classifier.get());
   regressor->copyToHostTensor(output_regressor.get());
+
+  // 4.parse the result
+  ParseOutputs(output_classifier.get(), output_regressor.get(), objects);
+  NMSObjects(objects, iouThreshold_);
+
+  std::cout << "End detect." << std::endl;
+  return true;
 }
 
 void FaceDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
@@ -127,9 +131,41 @@ void FaceDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
   ObjectInfo object;
   for (int i = 0; i < channel; ++i) {
     if (scores_ptr[i] < score_thresh_) continue;
-    
+    float offset_x = BLAZE_FACE_ANCHORS[4 * i + 0] * input_w_;
+    float offset_y = BLAZE_FACE_ANCHORS[4 * i + 1] * input_h_;
+    float *ptr = boxes_ptr + 16 * i;
+
+    float cx = ptr[0] + offset_x;
+    float cy = ptr[1] + offset_y;
+    float w = ptr[2];
+    float h = ptr[3];
+
+    object.score = scores_ptr[i];
+    Point2f tl, br, tl_origin, br_origin;
+    tl.x = cx - 0.5f * w;
+    tl.y = cy - 0.5f * h;
+    br.x = cx + 0.5f * w;
+    br.y = cy + 0.5f * h;
+
+    object.index_landmarks.resize(6);
+    Point2f pt;
+    for (int k = 0; k < 6; ++k) {
+      pt.x = ptr[4 + 2 * k + 0] + offset_x;
+      pt.y = ptr[4 + 2 * k + 1] + offset_y;
+      object.index_landmarks[k].x = trans_[0] * pt.x + trans_[1] * pt.y + trans_[2];
+      object.index_landmarks[k].y = trans_[3] * pt.x + trans_[4] * pt.y + trans_[5];
+    }
+
+    tl_origin.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
+    tl_origin.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];
+    br_origin.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
+    br_origin.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
+    object.tl.x = MIN_(tl_origin.x, br_origin.x);
+    object.tl.y = MIN_(tl_origin.y, br_origin.y);
+    object.br.x = MAX_(tl_origin.x, br_origin.x);
+    object.br.y = MAX_(tl_origin.y, br_origin.y);
+    objects.emplace_back(object);
   }
-                                
 }
 
 } // namespace mirror

@@ -40,7 +40,7 @@ private:
   MNN::Session *sess_ = nullptr;
   MNN::Tensor *input_tensor_ = nullptr;
   MNN::CV::Matrix trans_;
-  float score_thresh_ = 0.75f;
+  float score_thresh_ = 0.6f;
 
   const float meanVals_[3] = {127.5f, 127.5f, 127.5f};
   const float normVals_[3] = {1 / 127.5f, 1 / 127.5f, 1 / 127.5f};

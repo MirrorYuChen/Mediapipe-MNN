@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-06-27 10:16:40
+ * @LastEditTime: 2023-07-29 16:51:28
  * @Description: type defines
  * @FilePath: \Mediapipe-Hand\source\TypeDefines.h
  */
@@ -33,7 +33,8 @@ using NormalizedRect = Rect;
 struct ObjectInfo {
     Point2f tl;
     Point2f br;
-    Point2f landmarks[21];
+    std::vector<Point2f> index_landmarks;
+    std::vector<Point2f> landmarks;
     float score;
     float angle;
     int left_right;

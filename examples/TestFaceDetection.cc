@@ -1,20 +1,19 @@
 /*
  * @Author: chenjingyu
- * @Date: 2023-06-20 15:43:27
- * @LastEditTime: 2023-07-29 15:40:28
- * @Description: test palm detection
- * @FilePath: \Mediapipe-Hand\examples\TestPalmDetection.cc
+ * @Date: 2023-07-29 17:05:18
+ * @LastEditTime: 2023-07-29 17:08:31
+ * @Description: Test face detection
+ * @FilePath: \Mediapipe-Hand\examples\TestFaceDetection.cc
  */
 #include "TypeDefines.h"
-#include "PalmDetector.h"
-#include "PalmLandmarkDetector.h"
+#include "FaceDetector.h"
 #include <opencv2/opencv.hpp>
 #include <cmath>
 
 using namespace mirror;
 
 int main(int argc, char *argv[]) {
-  const char *image_file = "../data/images/hand.jpg";
+  const char *image_file = "../data/images/face.jpg";
   cv::Mat image = cv::imread(image_file);
   if (image.empty()) {
     std::cout << "failed load image." << std::endl;
@@ -37,12 +36,9 @@ int main(int argc, char *argv[]) {
   in.width_step = image.step[0];
   in.pixel_format = PixelFormat::BGR;
 
-  const char *palm_model_file = "../data/models/palm_detection_lite_fp16.mnn";
-  const char *landmark_model_file = "../data/models/hand_landmark_lite_fp16.mnn";
-  PalmDetector detector;
-  PalmLandmarkDetector landmarker;
-  if (!detector.LoadModel(palm_model_file) ||
-      !landmarker.LoadModel(landmark_model_file)) {
+  const char *face_model_file = "../data/models/face_detection_short_range_fp16.mnn";
+  FaceDetector detector;
+  if (!detector.LoadModel(face_model_file)) {
     std::cout << "Failed load model." << std::endl;
     return -1;
   }
@@ -50,22 +46,10 @@ int main(int argc, char *argv[]) {
 
   std::vector<ObjectInfo> objects;
   detector.Detect(in, type, objects);
-
-  landmarker.setSourceFormat(in.pixel_format);
-  landmarker.Detect(in, type, objects);
   for (const auto &object : objects) {
     cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
                   cv::Point2f(object.br.x, object.br.y),
-                  cv::Scalar(255, 0, 255), 2);
-    if (object.left_right == 1) {
-      cv::putText(image, "left",
-                  cv::Point2f(object.tl.x, object.tl.y - 10), 1, 3.0,
-                  cv::Scalar(255, 0, 255));
-    } else {
-      cv::putText(image, "right", cv::Point2f(object.tl.x, object.tl.y - 10), 1, 3.0,
-                  cv::Scalar(255, 0, 255));
-    }
-    
+                  cv::Scalar(255, 0, 255), 2);    
     for (int i = 0; i < object.index_landmarks.size(); ++i) {
        cv::Point pt = cv::Point(
          (int)object.index_landmarks[i].x,                               
@@ -73,17 +57,7 @@ int main(int argc, char *argv[]) {
       );
       cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));
     }
-
-    for (int i = 0; i < object.landmarks.size(); ++i) {
-      cv::Point pt = cv::Point(
-        (int)object.landmarks[i].x,
-        (int)object.landmarks[i].y
-      );
-      cv::circle(image, pt, 2, cv::Scalar(0, 255, 0));
-    }
   }
-
-
   cv::imshow("result", image);
   cv::waitKey(0);  
 

@@ -25,6 +25,7 @@ target_link_libraries(${PROJECT_NAME} MNN)
 
 set(EXAMPLE_LIST
     TestPalmDetection
+    TestFaceDetection
 )
 
 foreach(EXAMPLE ${EXAMPLE_LIST})
