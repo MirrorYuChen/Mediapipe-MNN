@@ -1,12 +1,12 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-06-27 10:16:45
+ * @LastEditTime: 2023-07-29 16:21:49
  * @Description: palm detector module
  * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
  */
 #include "PalmDetector.h"
-#include "PalmData.h"
+#include "CommonData.h"
 #include "Utils.h"
 #include <iostream>
 

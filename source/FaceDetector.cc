@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 15:47:03
- * @LastEditTime: 2023-07-29 15:57:50
+ * @LastEditTime: 2023-07-29 16:23:01
  * @Description: face detector
  * @FilePath: \Mediapipe-Hand\source\FaceDetector.cc
  */
@@ -10,6 +10,7 @@
 #include <iostream>
 
 namespace mirror {
+using namespace MNN;
 FaceDetector::~FaceDetector() {
   net_->releaseModel();
   net_->releaseSession(sess_);
@@ -110,8 +111,25 @@ bool FaceDetector::Detect(const ImageHead &in, RotateType type,
       new MNN::Tensor(regressor, regressor->getDimensionType()));
   classifier->copyToHostTensor(output_classifier.get());
   regressor->copyToHostTensor(output_regressor.get());
+}
 
-  
+void FaceDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
+                                std::vector<ObjectInfo> &objects) {
+  objects.clear();
+  float *scores_ptr = scores->host<float>();
+  float *boxes_ptr = boxes->host<float>();
+
+  int batch = scores->batch();
+  int channel = scores->channel();
+  int height = scores->height();
+  int width = scores->width();
+
+  ObjectInfo object;
+  for (int i = 0; i < channel; ++i) {
+    if (scores_ptr[i] < score_thresh_) continue;
+    
+  }
+                                
 }
 
 } // namespace mirror
