@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-project(Mediapipe-Hand)
+project(Mediapipe-MNN)
 
 set(3RD_DIR ${CMAKE_CURRENT_LIST_DIR}/3rdLibs)
 set(SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/source)
