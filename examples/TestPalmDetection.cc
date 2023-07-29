@@ -14,7 +14,7 @@
 using namespace mirror;
 
 int main(int argc, char *argv[]) {
-  const char *image_file = "../data/images/hand_demo.jpg";
+  const char *image_file = "../data/images/hand.jpg";
   cv::Mat image = cv::imread(image_file);
   if (image.empty()) {
     std::cout << "failed load image." << std::endl;
@@ -60,10 +60,10 @@ int main(int argc, char *argv[]) {
                   cv::Scalar(255, 0, 255), 2);
     if (object.left_right == 1) {
       cv::putText(image, "left",
-                  cv::Point2f(object.tl.x, object.tl.y), 1, 3.0,
+                  cv::Point2f(object.tl.x, object.tl.y - 10), 1, 3.0,
                   cv::Scalar(255, 0, 255));
     } else {
-      cv::putText(image, "right", cv::Point2f(object.tl.x, object.tl.y), 1, 3.0,
+      cv::putText(image, "right", cv::Point2f(object.tl.x, object.tl.y - 10), 1, 3.0,
                   cv::Scalar(255, 0, 255));
     }
     
