@@ -38,7 +38,6 @@ struct ObjectInfo {
     float score;
     float angle;
     int left_right;
-    int tongue;
 };
 
 enum PixelFormat {

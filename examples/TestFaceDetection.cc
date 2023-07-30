@@ -14,7 +14,7 @@
 using namespace mirror;
 
 int main(int argc, char *argv[]) {
-  const char *image_file = "../data/images/aobama.jpg";
+  const char *image_file = "../data/images/face_tongue.jpg";
   cv::Mat image = cv::imread(image_file);
   if (image.empty()) {
     std::cout << "failed load image." << std::endl;
@@ -74,13 +74,6 @@ int main(int argc, char *argv[]) {
     }
     cv::putText(image, std::to_string(object.score), cv::Point2f(object.tl.x, object.tl.y + 20),
                 1, 1.0, cv::Scalar(0, 255, 255));
-    if (object.tongue == 0) {
-      cv::putText(image, "no tonuge", cv::Point2f(object.tl.x, object.tl.y - 10), 1,
-                  1.0, cv::Scalar(0, 255, 255));
-    } else {
-      cv::putText(image, "tonuge", cv::Point2f(object.tl.x, object.tl.y - 10), 1,
-                  1.0, cv::Scalar(0, 255, 255));
-    }  
   }
   cv::imshow("result", image);
   cv::waitKey(0);  

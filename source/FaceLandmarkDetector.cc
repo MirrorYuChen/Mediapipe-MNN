@@ -98,18 +98,18 @@ bool FaceLandmarkDetector::Detect(const ImageHead &in, RotateType type,
     // 1.6 get the result
     MNN::Tensor *mesh = net_->getSessionOutput(sess_, "Identity");
     MNN::Tensor *face_score = net_->getSessionOutput(sess_, "Identity_1");
-    MNN::Tensor *tongue_score = net_->getSessionOutput(sess_, "Identity_2");
+    //MNN::Tensor *tongue_score = net_->getSessionOutput(sess_, "Identity_2");
 
-    std::shared_ptr<MNN::Tensor> output_mesh(
+    std::shared_ptr<MNN::Tensor> output_mesh( 
         new MNN::Tensor(mesh, mesh->getDimensionType()));
     std::shared_ptr<MNN::Tensor> output_face_score(
         new MNN::Tensor(face_score, face_score->getDimensionType()));
-    std::shared_ptr<MNN::Tensor> output_tongue_score(
-        new MNN::Tensor(tongue_score, tongue_score->getDimensionType()));
+    //std::shared_ptr<MNN::Tensor> output_tongue_score(
+    //    new MNN::Tensor(tongue_score, tongue_score->getDimensionType()));
 
     mesh->copyToHostTensor(output_mesh.get());
     face_score->copyToHostTensor(output_face_score.get());
-    tongue_score->copyToHostTensor(output_tongue_score.get());
+    //tongue_score->copyToHostTensor(output_tongue_score.get());
 
     Point2f landmark;
     object.landmarks.resize(478);
@@ -125,13 +125,6 @@ bool FaceLandmarkDetector::Detect(const ImageHead &in, RotateType type,
 
     float *face_score_ptr = output_face_score->host<float>();
     object.score = sigmoid(face_score_ptr[0]);
-
-    float *tongue_score_ptr = output_tongue_score->host<float>();
-    if (tongue_score_ptr[0] > 0.5f) {
-      object.tongue = 1;
-    } else {
-      object.tongue = 0;
-    }
   }
 
   return true;
