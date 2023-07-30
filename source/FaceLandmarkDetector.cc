@@ -124,7 +124,7 @@ bool FaceLandmarkDetector::Detect(const ImageHead &in, RotateType type,
     }
 
     float *face_score_ptr = output_face_score->host<float>();
-    object.score = face_score_ptr[0];
+    object.score = sigmoid(face_score_ptr[0]);
 
     float *tongue_score_ptr = output_tongue_score->host<float>();
     if (tongue_score_ptr[0] > 0.5f) {
