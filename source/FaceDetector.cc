@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 15:47:03
- * @LastEditTime: 2023-07-29 23:21:42
+ * @LastEditTime: 2023-07-30 12:54:42
  * @Description: face detector
  * @FilePath: \Mediapipe-MNN\source\FaceDetector.cc
  */
@@ -80,8 +80,7 @@ bool FaceDetector::Detect(const ImageHead &in, RotateType type,
   // 1.set input
   int width = in.width;
   int height = in.height;
-  std::vector<Point2f> input_region =
-      getInputRegion(width, height, input_w_, input_h_, type);
+  std::vector<Point2f> input_region = getInputRegion(in, input_w_, input_h_, type);
   float points_src[] = {
     input_region[0].x, input_region[0].y, 
     input_region[1].x, input_region[1].y,
@@ -169,6 +168,17 @@ void FaceDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
       object.index_landmarks[k].x = trans_[0] * pt.x + trans_[1] * pt.y + trans_[2];
       object.index_landmarks[k].y = trans_[3] * pt.x + trans_[4] * pt.y + trans_[5];
     }
+
+    // 2.parse the index landmarks
+    Point2f src, dst;
+    src.x = ptr[4] + offset_x;
+    src.y = ptr[5] + offset_y;
+    dst.x = ptr[6] + offset_x;
+    dst.y = ptr[7] + offset_y; 
+
+    float dx = dst.x - src.x;
+    float dy = dst.y - src.y;
+    object.angle = -(0.0f - std::atan2(-dy, dx) * 180.0f / M_PI);
 
     tl_origin.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
     tl_origin.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];

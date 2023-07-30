@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-07-29 16:51:05
+ * @LastEditTime: 2023-07-30 12:54:27
  * @Description: palm detector module
- * @FilePath: \Mediapipe-Hand\source\PalmDetector.cc
+ * @FilePath: \Mediapipe-MNN\source\PalmDetector.cc
  */
 #include "PalmDetector.h"
 #include "CommonData.h"
@@ -71,8 +71,7 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   // 1.set input
   int width = in.width;
   int height = in.height;
-  std::vector<Point2f> input_region =
-      getInputRegion(width, height, input_w_, input_h_, type);
+  std::vector<Point2f> input_region = getInputRegion(in, input_w_, input_h_, type);
   float points_src[] = {
     input_region[0].x, input_region[0].y,
     input_region[1].x, input_region[1].y,

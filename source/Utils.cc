@@ -1,15 +1,19 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-06-25 17:44:04
+ * @LastEditTime: 2023-07-30 12:53:37
  * @Description: utils module
- * @FilePath: \Mediapipe-Hand\source\Utils.cc
+ * @FilePath: \Mediapipe-MNN\source\Utils.cc
  */
 #include "Utils.h"
 #include <iostream>
 #include <algorithm>
 
+#include <MNN/Matrix.h>
+#include <MNN/Rect.h>
+
 namespace mirror {
+using namespace MNN;
 float ComputeRotation(const Point2f &src, const Point2f &dst) {
   const float dx = dst.x - src.x;
   const float dy = dst.y - src.y;
@@ -17,13 +21,13 @@ float ComputeRotation(const Point2f &src, const Point2f &dst) {
   return -angle;
 }
 
-std::vector<Point2f> getInputRegion(int in_w, int in_h, int out_w, int out_h, RotateType type) {
+std::vector<Point2f> getInputRegion(const ImageHead &in, int out_w, int out_h, RotateType type) {
   std::vector<Point2f> input_region(4);
-  float in_scale = static_cast<float>(in_w) / static_cast<float>(in_h);
+  float in_scale = static_cast<float>(in.width) / static_cast<float>(in.height);
   float out_scale = static_cast<float>(out_w) / static_cast<float>(out_h);
 
-  int region_w = in_w;
-  int region_h = in_h;
+  int region_w = in.width;
+  int region_h = in.height;
   if (in_scale > out_scale) {
     region_h = region_w / out_scale;
   } else {
@@ -61,6 +65,51 @@ std::vector<Point2f> getInputRegion(int in_w, int in_h, int out_w, int out_h, Ro
   }
 
   return input_region;
+}
+
+std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const ObjectInfo &object, float expand_scale) {
+  int width = in.width;
+  int height = in.height;
+  // 1.align the image
+  float init_angle = object.angle;
+  float angle = RotateTypeToAngle(type) + init_angle;
+
+  // 2.get the align region
+  CV::Matrix trans;
+  trans.postRotate(angle, 0.5f * width, 0.5f * height);
+  float rect_width = object.br.x - object.tl.x;
+  float rect_height = object.br.y - object.tl.y;
+
+  Point2f center;
+  center.x = 0.5f * (object.br.x + object.tl.x);
+  center.y = 0.5f * (object.br.y + object.tl.y);
+  float center_x = trans[0] * center.x + trans[1] * center.y + trans[2];
+  float center_y = trans[3] * center.x + trans[4] * center.y + trans[5] - 0.5f * rect_height;
+
+  // 3. expand the region
+  float half_max_side = MAX_(rect_width, rect_height) * 0.5f * expand_scale;
+  float xmin = center_x - half_max_side;
+  float ymin = center_y - half_max_side;
+  float xmax = center_x + half_max_side;
+  float ymax = center_y + half_max_side;
+
+  std::vector<Point2f> region(4);
+  region[0].x = xmin;
+  region[0].y = ymin;
+  region[1].x = xmin;
+  region[1].y = ymax;
+  region[2].x = xmax;
+  region[2].y = ymin;
+  region[3].x = xmax;
+  region[3].y = ymax;
+
+  std::vector<Point2f> result(4);
+  trans.invert(&trans);
+  for (size_t i = 0; i < region.size(); ++i) {
+    result[i].x = trans[0] * region[i].x + trans[1] * region[i].y + trans[2];
+    result[i].y = trans[3] * region[i].x + trans[4] * region[i].y + trans[5];
+  }
+  return result;
 }
 
 float sigmoid(float x) {

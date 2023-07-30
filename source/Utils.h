@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:31
- * @LastEditTime: 2023-06-25 17:44:25
+ * @LastEditTime: 2023-07-30 12:53:20
  * @Description: utils module
- * @FilePath: \Mediapipe-Hand\source\Utils.h
+ * @FilePath: \Mediapipe-MNN\source\Utils.h
  */
 #pragma once
 
@@ -24,7 +24,8 @@ constexpr int kNumLandmarks = 21;
 constexpr float kTargetAngle = M_PI * 0.5f;
 float ComputeRotation(const Point2f & src, const Point2f &dst);
 
-std::vector<Point2f> getInputRegion(int in_w, int in_h, int out_w, int out_h, RotateType type);
+std::vector<Point2f> getInputRegion(const ImageHead &in, int out_w, int out_h, RotateType type);
+std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const ObjectInfo &object, float expand_scale);
 
 float sigmoid(float x);
 

@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:11:06
- * @LastEditTime: 2023-07-29 17:01:55
+ * @LastEditTime: 2023-07-30 12:51:45
  * @Description: landmark detector module
- * @FilePath: \Mediapipe-Hand\source\PalmLandmarkDetector.cc
+ * @FilePath: \Mediapipe-MNN\source\PalmLandmarkDetector.cc
  */
 #include "PalmLandmarkDetector.h"
 #include "Utils.h"
@@ -54,53 +54,6 @@ void PalmLandmarkDetector::setSourceFormat(int format) {
       CV::ImageProcess::create(image_process_config));
 }
 
-std::vector<Point2f>
-PalmLandmarkDetector::getPointRegion(const ImageHead &in, RotateType type,
-                                   const ObjectInfo &object) {
-  int width = in.width;
-  int height = in.height;
-  // 1.align the image
-  float init_angle = object.angle;
-  float angle = RotateTypeToAngle(type) + init_angle;
-
-  // 2.get the align region
-  CV::Matrix trans;
-  trans.postRotate(angle, 0.5f * width, 0.5f * height);
-  float rect_width = object.br.x - object.tl.x;
-  float rect_height = object.br.y - object.tl.y;
-
-  Point2f center;
-  center.x = 0.5f * (object.br.x + object.tl.x);
-  center.y = 0.5f * (object.br.y + object.tl.y);
-  float center_x = trans[0] * center.x + trans[1] * center.y + trans[2];
-  float center_y = trans[3] * center.x + trans[4] * center.y + trans[5] - 0.5f * rect_height;
-
-  // 3. expand the region
-  float half_max_side = MAX_(rect_width, rect_height) * 1.3f;
-  float xmin = center_x - half_max_side;
-  float ymin = center_y - half_max_side;
-  float xmax = center_x + half_max_side;
-  float ymax = center_y + half_max_side;
-
-  std::vector<Point2f> region(4);
-  region[0].x = xmin;
-  region[0].y = ymin;
-  region[1].x = xmin;
-  region[1].y = ymax;
-  region[2].x = xmax;
-  region[2].y = ymin;
-  region[3].x = xmax;
-  region[3].y = ymax;
-
-  std::vector<Point2f> result(4);
-  trans.invert(&trans);
-  for (size_t i = 0; i < region.size(); ++i) {
-    result[i].x = trans[0] * region[i].x + trans[1] * region[i].y + trans[2];
-    result[i].y = trans[3] * region[i].x + trans[4] * region[i].y + trans[5];
-  }
-  return result;
-}
-
 bool PalmLandmarkDetector::Detect(const ImageHead &in, RotateType type,
                                 std::vector<ObjectInfo> &objects) {
   std::cout << "Start detect." << std::endl;
@@ -116,7 +69,7 @@ bool PalmLandmarkDetector::Detect(const ImageHead &in, RotateType type,
   int width = in.width;
   int height = in.height;
   for (auto &object : objects) {
-    std::vector<Point2f> region = getPointRegion(in, type, object);
+    std::vector<Point2f> region = getInputRegion(in, type, object, 2.6f);
     float points_src[] = {
       region[0].x, region[0].y, region[1].x, region[1].y,
       region[2].x, region[2].y, region[3].x, region[3].y,

@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
          (int)object.index_landmarks[i].y
       );
       cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));
+      cv::putText(image, std::to_string(i), pt, 1, 1.0, cv::Scalar(255, 0, 255));
     }
   }
   cv::imshow("result", image);
