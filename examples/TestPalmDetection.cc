@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 15:43:27
- * @LastEditTime: 2023-07-29 15:40:28
+ * @LastEditTime: 2023-07-30 17:07:08
  * @Description: test palm detection
- * @FilePath: \Mediapipe-Hand\examples\TestPalmDetection.cc
+ * @FilePath: \Mediapipe-MNN\examples\TestPalmDetection.cc
  */
 #include "TypeDefines.h"
 #include "PalmDetector.h"
@@ -66,18 +66,18 @@ int main(int argc, char *argv[]) {
                   cv::Scalar(255, 0, 255));
     }
     
-    for (int i = 0; i < object.index_landmarks.size(); ++i) {
+    for (int i = 0; i < object.landmarks.size(); ++i) {
        cv::Point pt = cv::Point(
-         (int)object.index_landmarks[i].x,                               
-         (int)object.index_landmarks[i].y
+         (int)object.landmarks[i].x,                               
+         (int)object.landmarks[i].y
       );
       cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));
     }
 
-    for (int i = 0; i < object.landmarks.size(); ++i) {
+    for (int i = 0; i < object.landmarks3d.size(); ++i) {
       cv::Point pt = cv::Point(
-        (int)object.landmarks[i].x,
-        (int)object.landmarks[i].y
+        (int)object.landmarks3d[i].x,
+        (int)object.landmarks3d[i].y
       );
       cv::circle(image, pt, 2, cv::Scalar(0, 255, 0));
     }

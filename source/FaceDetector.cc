@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 15:47:03
- * @LastEditTime: 2023-07-30 12:54:42
+ * @LastEditTime: 2023-07-30 17:04:31
  * @Description: face detector
  * @FilePath: \Mediapipe-MNN\source\FaceDetector.cc
  */
@@ -160,13 +160,13 @@ void FaceDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
     br.x = cx + 0.5f * w;
     br.y = cy + 0.5f * h;
 
-    object.index_landmarks.resize(6);
+    object.landmarks.resize(6);
     Point2f pt;
     for (int k = 0; k < 6; ++k) {
       pt.x = ptr[4 + 2 * k + 0] + offset_x;
       pt.y = ptr[4 + 2 * k + 1] + offset_y;
-      object.index_landmarks[k].x = trans_[0] * pt.x + trans_[1] * pt.y + trans_[2];
-      object.index_landmarks[k].y = trans_[3] * pt.x + trans_[4] * pt.y + trans_[5];
+      object.landmarks[k].x = trans_[0] * pt.x + trans_[1] * pt.y + trans_[2];
+      object.landmarks[k].y = trans_[3] * pt.x + trans_[4] * pt.y + trans_[5];
     }
 
     // 2.parse the index landmarks

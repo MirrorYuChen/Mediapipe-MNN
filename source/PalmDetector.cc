@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-07-30 12:54:27
+ * @LastEditTime: 2023-07-30 17:04:55
  * @Description: palm detector module
  * @FilePath: \Mediapipe-MNN\source\PalmDetector.cc
  */
@@ -71,6 +71,7 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
   // 1.set input
   int width = in.width;
   int height = in.height;
+  // clang-format off
   std::vector<Point2f> input_region = getInputRegion(in, input_w_, input_h_, type);
   float points_src[] = {
     input_region[0].x, input_region[0].y,
@@ -84,6 +85,7 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
     (float)(input_w_ - 1), 0.0f,
     (float)(input_w_ - 1), (float)(input_h_ - 1),
   };
+  // clang-format on
   trans_.setPolyToPoly((CV::Point *)points_dst, (CV::Point *)points_src, 4);
   pretreat_->setMatrix(trans_);
   pretreat_->convert((uint8_t *)in.data, width, height, in.width_step, input_tensor_);
@@ -159,13 +161,13 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
     float dy = dst.y - src.y;
     object.angle = -(90.0f - std::atan2(-dy, dx) * 180.0f / M_PI);
 
-    object.index_landmarks.resize(7);
+    object.landmarks.resize(7);
     Point2f pt;
     for (int k = 0; k < 7; ++k) {      
       pt.x = ptr[4 + 2 * k + 0] + offset_x;
       pt.y = ptr[4 + 2 * k + 1] + offset_y;
-      object.index_landmarks[k].x = trans_[0] * pt.x + trans_[1] * pt.y + trans_[2];
-      object.index_landmarks[k].y = trans_[3] * pt.x + trans_[4] * pt.y + trans_[5];
+      object.landmarks[k].x = trans_[0] * pt.x + trans_[1] * pt.y + trans_[2];
+      object.landmarks[k].y = trans_[3] * pt.x + trans_[4] * pt.y + trans_[5];
     }
     
     tl_origin.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];

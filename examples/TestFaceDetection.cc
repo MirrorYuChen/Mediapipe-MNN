@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 17:05:18
- * @LastEditTime: 2023-07-30 15:37:55
+ * @LastEditTime: 2023-07-30 17:07:32
  * @Description: Test face detection
  * @FilePath: \Mediapipe-MNN\examples\TestFaceDetection.cc
  */
@@ -57,18 +57,18 @@ int main(int argc, char *argv[]) {
     cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
                   cv::Point2f(object.br.x, object.br.y),
                   cv::Scalar(255, 0, 255), 2);    
-    for (int i = 0; i < object.index_landmarks.size(); ++i) {
-       cv::Point pt = cv::Point(
-         (int)object.index_landmarks[i].x,                               
-         (int)object.index_landmarks[i].y
-      );
-      cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));
-      cv::putText(image, std::to_string(i), pt, 1, 1.0, cv::Scalar(255, 0, 255));
-    }
     for (int i = 0; i < object.landmarks.size(); ++i) {
        cv::Point pt = cv::Point(
          (int)object.landmarks[i].x,                               
          (int)object.landmarks[i].y
+      );
+      cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));
+      cv::putText(image, std::to_string(i), pt, 1, 1.0, cv::Scalar(255, 0, 255));
+    }
+    for (int i = 0; i < object.landmarks3d.size(); ++i) {
+       cv::Point pt = cv::Point(
+         (int)object.landmarks3d[i].x,                               
+         (int)object.landmarks3d[i].y
       );
       cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));    
     }

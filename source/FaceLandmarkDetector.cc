@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-30 12:58:06
- * @LastEditTime: 2023-07-30 16:05:43
+ * @LastEditTime: 2023-07-30 17:03:35
  * @Description: face landmark detector
  * @FilePath: \Mediapipe-MNN\source\FaceLandmarkDetector.cc
  */
@@ -112,15 +112,16 @@ bool FaceLandmarkDetector::Detect(const ImageHead &in, RotateType type,
     //tongue_score->copyToHostTensor(output_tongue_score.get());
 
     Point2f landmark;
-    object.landmarks.resize(478);
+    object.landmarks3d.resize(478);
     float *mesh_ptr = output_mesh->host<float>();
     for (int k = 0; k < 478; ++k) {
       landmark.x = mesh_ptr[3 * k + 0];
       landmark.y = mesh_ptr[3 * k + 1];
-      object.landmarks[k].x =
+      object.landmarks3d[k].x =
           trans_[0] * landmark.x + trans_[1] * landmark.y + trans_[2];
-      object.landmarks[k].y =
+      object.landmarks3d[k].y =
           trans_[3] * landmark.x + trans_[4] * landmark.y + trans_[5];
+      object.landmarks3d[k].z = mesh_ptr[3 * k + 2];
     }
 
     float *face_score_ptr = output_face_score->host<float>();
