@@ -26,6 +26,7 @@ target_link_libraries(${PROJECT_NAME} MNN opencv_world342)
 set(EXAMPLE_LIST
     TestPalmDetection
     TestFaceDetection
+    TestMNNFaceDetector
 )
 
 foreach(EXAMPLE ${EXAMPLE_LIST})
