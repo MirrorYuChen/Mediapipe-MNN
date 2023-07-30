@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:10:57
- * @LastEditTime: 2023-07-29 15:39:42
+ * @LastEditTime: 2023-07-30 12:57:14
  * @Description: landmark detector module
- * @FilePath: \Mediapipe-Hand\source\PalmLandmarkDetector.h
+ * @FilePath: \Mediapipe-MNN\source\PalmLandmarkDetector.h
  */
 #pragma once
 
@@ -24,10 +24,6 @@ public:
   bool LoadModel(const char *model_file);
   void setSourceFormat(int format);
   bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
-
-private:
-  std::vector<Point2f> getPointRegion(const ImageHead &in, RotateType type,
-                                      const ObjectInfo &object);
 
 private:
   bool inited_ = false;

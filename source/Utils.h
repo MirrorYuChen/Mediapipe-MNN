@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:31
- * @LastEditTime: 2023-07-30 12:53:20
+ * @LastEditTime: 2023-07-30 16:02:55
  * @Description: utils module
  * @FilePath: \Mediapipe-MNN\source\Utils.h
  */
@@ -25,7 +25,8 @@ constexpr float kTargetAngle = M_PI * 0.5f;
 float ComputeRotation(const Point2f & src, const Point2f &dst);
 
 std::vector<Point2f> getInputRegion(const ImageHead &in, int out_w, int out_h, RotateType type);
-std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const ObjectInfo &object, float expand_scale);
+std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const ObjectInfo &object,
+  float expand_scale=1.0f, float offset_x_scale=0.0f, float offset_y_scale=0.0f);
 
 float sigmoid(float x);
 

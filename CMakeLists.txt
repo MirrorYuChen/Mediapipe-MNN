@@ -21,7 +21,7 @@ file(GLOB_RECURSE SRC_FILES
 )
 
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
-target_link_libraries(${PROJECT_NAME} MNN)
+target_link_libraries(${PROJECT_NAME} MNN opencv_world342)
 
 set(EXAMPLE_LIST
     TestPalmDetection

@@ -67,7 +67,8 @@ std::vector<Point2f> getInputRegion(const ImageHead &in, int out_w, int out_h, R
   return input_region;
 }
 
-std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const ObjectInfo &object, float expand_scale) {
+std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const ObjectInfo &object,
+                                    float expand_scale, float offset_x_scale, float offset_y_scale) {
   int width = in.width;
   int height = in.height;
   // 1.align the image
@@ -83,8 +84,8 @@ std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const 
   Point2f center;
   center.x = 0.5f * (object.br.x + object.tl.x);
   center.y = 0.5f * (object.br.y + object.tl.y);
-  float center_x = trans[0] * center.x + trans[1] * center.y + trans[2];
-  float center_y = trans[3] * center.x + trans[4] * center.y + trans[5] - 0.5f * rect_height;
+  float center_x = trans[0] * center.x + trans[1] * center.y + trans[2] + offset_x_scale * rect_width;
+  float center_y = trans[3] * center.x + trans[4] * center.y + trans[5] + offset_y_scale * rect_height;
 
   // 3. expand the region
   float half_max_side = MAX_(rect_width, rect_height) * 0.5f * expand_scale;

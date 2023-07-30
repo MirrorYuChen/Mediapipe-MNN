@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-07-29 16:51:28
+ * @LastEditTime: 2023-07-30 15:28:56
  * @Description: type defines
- * @FilePath: \Mediapipe-Hand\source\TypeDefines.h
+ * @FilePath: \Mediapipe-MNN\source\TypeDefines.h
  */
 #pragma once
 
@@ -38,6 +38,7 @@ struct ObjectInfo {
     float score;
     float angle;
     int left_right;
+    int tongue;
 };
 
 enum PixelFormat {

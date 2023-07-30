@@ -1,12 +1,13 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 17:05:18
- * @LastEditTime: 2023-07-29 17:08:31
+ * @LastEditTime: 2023-07-30 15:37:55
  * @Description: Test face detection
- * @FilePath: \Mediapipe-Hand\examples\TestFaceDetection.cc
+ * @FilePath: \Mediapipe-MNN\examples\TestFaceDetection.cc
  */
 #include "TypeDefines.h"
 #include "FaceDetector.h"
+#include "FaceLandmarkDetector.h"
 #include <opencv2/opencv.hpp>
 #include <cmath>
 
@@ -36,17 +37,22 @@ int main(int argc, char *argv[]) {
   in.width_step = image.step[0];
   in.pixel_format = PixelFormat::BGR;
 
-  const char *face_model_file = "../data/models/face_detection_full_range_sparse_fp16.mnn";
+  const char *face_model_file = "../data/models/face_detection_short_range_fp16.mnn";
+  const char *face_landmark_model_file = "../data/models/face_landmarks_detector_fp16.mnn";
   FaceDetector detector;
-  if (!detector.LoadModel(face_model_file)) {
+  FaceLandmarkDetector landmarker;
+  if (!detector.LoadModel(face_model_file) ||
+      !landmarker.LoadModel(face_landmark_model_file)) {
     std::cout << "Failed load model." << std::endl;
     return -1;
   }
   detector.setSourceFormat(in.pixel_format);
-  detector.setUseFull();
+  landmarker.setSourceFormat(in.pixel_format);
+  //detector.setUseFull();
 
   std::vector<ObjectInfo> objects;
   detector.Detect(in, type, objects);
+  landmarker.Detect(in, type, objects);
   for (const auto &object : objects) {
     cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
                   cv::Point2f(object.br.x, object.br.y),
@@ -59,6 +65,20 @@ int main(int argc, char *argv[]) {
       cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));
       cv::putText(image, std::to_string(i), pt, 1, 1.0, cv::Scalar(255, 0, 255));
     }
+    for (int i = 0; i < object.landmarks.size(); ++i) {
+       cv::Point pt = cv::Point(
+         (int)object.landmarks[i].x,                               
+         (int)object.landmarks[i].y
+      );
+      cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));    
+    }
+    if (object.tongue == 0) {
+      cv::putText(image, "no tonuge", cv::Point2f(object.tl.x, object.tl.y), 1,
+                  1.0, cv::Scalar(0, 255, 255));
+    } else {
+      cv::putText(image, "tonuge", cv::Point2f(object.tl.x, object.tl.y), 1,
+                  1.0, cv::Scalar(0, 255, 255));
+    }  
   }
   cv::imshow("result", image);
   cv::waitKey(0);  

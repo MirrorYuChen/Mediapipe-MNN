@@ -69,7 +69,7 @@ bool PalmLandmarkDetector::Detect(const ImageHead &in, RotateType type,
   int width = in.width;
   int height = in.height;
   for (auto &object : objects) {
-    std::vector<Point2f> region = getInputRegion(in, type, object, 2.6f);
+    std::vector<Point2f> region = getInputRegion(in, type, object, 2.6f, 0.0f, -0.5f);
     float points_src[] = {
       region[0].x, region[0].y, region[1].x, region[1].y,
       region[2].x, region[2].y, region[3].x, region[3].y,
