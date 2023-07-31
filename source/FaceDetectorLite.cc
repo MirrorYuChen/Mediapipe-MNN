@@ -1,27 +1,26 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-30 20:40:28
- * @LastEditTime: 2023-07-30 21:48:55
- * @Description: 
- * @FilePath: \Mediapipe-MNN\source\MNNFaceDetector.cc
+ * @LastEditTime: 2023-07-31 09:30:34
+ * @Description: face detector lite
+ * @FilePath: \Mediapipe-MNN\source\FaceDetectorLite.cc
  */
-#include "MNNFaceDetector.h"
+#include "FaceDetectorLite.h"
 
 #include "Utils.h"
 #include <iostream>
 
 namespace mirror {
-static constexpr float BIASES[] = {
-  1.0f, 1.0f, 3.0f, 3.0f, 5.0f, 5.0f, 7.0f, 7.0f, 10.0f, 10.0f
-};
+static constexpr float BIASES[] = {1.0f, 1.0f, 3.0f, 3.0f,  5.0f,
+                                   5.0f, 7.0f, 7.0f, 10.0f, 10.0f};
 
 using namespace MNN;
-MNNFaceDetector::~MNNFaceDetector() {
+FaceDetectorLite::~FaceDetectorLite() {
   net_->releaseModel();
   net_->releaseSession(sess_);
 }
 
-bool MNNFaceDetector::LoadModel(const char *model_file) {
+bool FaceDetectorLite::LoadModel(const char *model_file) {
   std::cout << "Start load model." << std::endl;
   // 1.load model
   net_ = std::unique_ptr<Interpreter>(Interpreter::createFromFile(model_file));
@@ -45,7 +44,7 @@ bool MNNFaceDetector::LoadModel(const char *model_file) {
   return true;
 }
 
-void MNNFaceDetector::setSourceFormat(int format) {
+void FaceDetectorLite::setSourceFormat(int format) {
   // create image process
   CV::ImageProcess::Config image_process_config;
   image_process_config.filterType = CV::BILINEAR;
@@ -58,8 +57,8 @@ void MNNFaceDetector::setSourceFormat(int format) {
       CV::ImageProcess::create(image_process_config));
 }
 
-bool MNNFaceDetector::Detect(const ImageHead &in, RotateType type,
-                          std::vector<ObjectInfo> &objects) {
+bool FaceDetectorLite::Detect(const ImageHead &in, RotateType type,
+                              std::vector<ObjectInfo> &objects) {
   std::cout << "Start detect." << std::endl;
   objects.clear();
   if (in.data == nullptr) {
@@ -70,7 +69,7 @@ bool MNNFaceDetector::Detect(const ImageHead &in, RotateType type,
   if (!inited_) {
     std::cout << "Model Uninitialized." << std::endl;
     return false;
-  }  
+  }
   // 1.set input
   int width = in.width;
   int height = in.height;
@@ -91,7 +90,8 @@ bool MNNFaceDetector::Detect(const ImageHead &in, RotateType type,
   // clang-format on
   trans_.setPolyToPoly((CV::Point *)points_dst, (CV::Point *)points_src, 4);
   pretreat_->setMatrix(trans_);
-  pretreat_->convert((uint8_t *)in.data, width, height, in.width_step, input_tensor_);
+  pretreat_->convert((uint8_t *)in.data, width, height, in.width_step,
+                     input_tensor_);
 
   // 2.do inference
   int ret = net_->runSession(sess_);
@@ -110,7 +110,6 @@ bool MNNFaceDetector::Detect(const ImageHead &in, RotateType type,
       new MNN::Tensor(result, result->getDimensionType()));
   result->copyToHostTensor(output_result.get());
 
-
   // 4.parse the result
   float *result_ptr = output_result->host<float>();
   int rows = output_result->height();
@@ -119,39 +118,39 @@ bool MNNFaceDetector::Detect(const ImageHead &in, RotateType type,
   int channel_step = cols * rows;
 
   ObjectInfo object;
-  for (int c = 0; c < channel_step; ++c) {
-    int row = c / cols;
-    int col = c % cols;
-    int index = 5 * channel_step;
-    for (int j = 0; j < boxNum_; ++j) {
-      int index_boxes = index * j + c;
-      int index_score = index_boxes + 4 * channel_step;
-      
-      float score = sigmoid(result_ptr[index_score]);
-      if (score < score_thresh_) continue;
-      
-      float cx = (col + sigmoid(result_ptr[index_boxes + 0 * channel_step])) / cols;
-      float cy = (row + sigmoid(result_ptr[index_boxes + 1 * channel_step])) / rows;
-      float w = exp(result_ptr[index_boxes + 2 * channel_step]) * BIASES[2 * j] / cols;
-      float h = exp(result_ptr[index_boxes + 3 * channel_step]) * BIASES[2 * j + 1] / rows;
-      
-      Point2f tl, br, tl_origin, br_origin;
-      tl.x = (cx - 0.5f * w) * input_w_;
-      tl.y = (cy - 0.5f * h) * input_h_;
-      br.x = (cx + 0.5f * w) * input_w_;
-      br.y = (cy + 0.5f * h) * input_h_;
+  for (int row = 0; row < rows; ++row) {
+    for (int col = 0; col < cols; ++col) {
+      int index = 5 * channel_step;
+      for (int j = 0; j < boxNum_; ++j) {
+        int index_boxes = index * j + row * cols + col;
+        int index_score = index_boxes + 4 * channel_step;
 
-      tl_origin.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
-      tl_origin.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];
-      br_origin.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
-      br_origin.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
-      
-      object.tl.x = MIN_(tl_origin.x, br_origin.x);
-      object.tl.y = MIN_(tl_origin.y, br_origin.y);
-      object.br.x = MAX_(tl_origin.x, br_origin.x);
-      object.br.y = MAX_(tl_origin.y, br_origin.y);
-      
-      objects.emplace_back(object);
+        float score = sigmoid(result_ptr[index_score]);
+        if (score < score_thresh_) continue;
+
+        float cx = (col + sigmoid(result_ptr[index_boxes + 0 * channel_step])) / cols;
+        float cy = (row + sigmoid(result_ptr[index_boxes + 1 * channel_step])) / rows;
+        float w = exp(result_ptr[index_boxes + 2 * channel_step]) * BIASES[2 * j] / cols;
+        float h = exp(result_ptr[index_boxes + 3 * channel_step]) * BIASES[2 * j + 1] / rows;
+
+        Point2f tl, br, tl_origin, br_origin;
+        tl.x = (cx - 0.5f * w) * input_w_;
+        tl.y = (cy - 0.5f * h) * input_h_;
+        br.x = (cx + 0.5f * w) * input_w_;
+        br.y = (cy + 0.5f * h) * input_h_;
+
+        tl_origin.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
+        tl_origin.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];
+        br_origin.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
+        br_origin.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
+
+        object.tl.x = MIN_(tl_origin.x, br_origin.x);
+        object.tl.y = MIN_(tl_origin.y, br_origin.y);
+        object.br.x = MAX_(tl_origin.x, br_origin.x);
+        object.br.y = MAX_(tl_origin.y, br_origin.y);
+
+        objects.emplace_back(object);
+      }
     }
   }
   NMSObjects(objects, iouThreshold_);
@@ -159,7 +158,5 @@ bool MNNFaceDetector::Detect(const ImageHead &in, RotateType type,
   std::cout << "End detect." << std::endl;
   return true;
 }
-
-
 
 } // namespace mirror

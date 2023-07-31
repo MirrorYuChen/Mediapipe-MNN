@@ -1,12 +1,12 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-30 21:43:30
- * @LastEditTime: 2023-07-30 21:45:58
+ * @LastEditTime: 2023-07-31 09:27:47
  * @Description: Test MNN face detector
- * @FilePath: \Mediapipe-MNN\examples\TestMNNFaceDetector.cc
+ * @FilePath: \Mediapipe-MNN\examples\TestFaceDetectorLite.cc
  */
 #include "TypeDefines.h"
-#include "MNNFaceDetector.h"
+#include "FaceDetectorLite.h"
 #include <opencv2/opencv.hpp>
 #include <cmath>
 
@@ -36,8 +36,8 @@ int main(int argc, char *argv[]) {
   in.width_step = image.step[0];
   in.pixel_format = PixelFormat::BGR;
 
-  const char *face_model_file = "../data/models/mnn_face_detection.mnn";
-  MNNFaceDetector detector;
+  const char *face_model_file = "../data/models/face_detection_lite.mnn";
+  FaceDetectorLite detector;
   if (!detector.LoadModel(face_model_file)) {
     std::cout << "Failed load model." << std::endl;
     return -1;

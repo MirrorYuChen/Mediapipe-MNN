@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-30 20:38:44
- * @LastEditTime: 2023-07-30 20:48:39
- * @Description: mnn face detect
- * @FilePath: \Mediapipe-MNN\source\MNNFaceDetector.h
+ * @LastEditTime: 2023-07-31 09:30:00
+ * @Description: face detector lite: https://github.com/TnoobT/MNNFaceDetect
+ * @FilePath: \Mediapipe-MNN\source\FaceDetectorLite.h
  */
 #pragma once
 
@@ -16,10 +16,10 @@
 #include <vector>
 
 namespace mirror {
-class MNNFaceDetector {
+class FaceDetectorLite {
 public:
-  MNNFaceDetector() = default;
-  ~MNNFaceDetector();
+  FaceDetectorLite() = default;
+  ~FaceDetectorLite();
 
   bool LoadModel(const char *model_file);
   void setSourceFormat(int format);
