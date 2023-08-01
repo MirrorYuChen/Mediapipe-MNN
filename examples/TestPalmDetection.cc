@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 15:43:27
- * @LastEditTime: 2023-07-30 17:07:08
+ * @LastEditTime: 2023-08-01 18:02:13
  * @Description: test palm detection
  * @FilePath: \Mediapipe-MNN\examples\TestPalmDetection.cc
  */
@@ -54,15 +54,14 @@ int main(int argc, char *argv[]) {
   landmarker.setSourceFormat(in.pixel_format);
   landmarker.Detect(in, type, objects);
   for (const auto &object : objects) {
-    cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
-                  cv::Point2f(object.br.x, object.br.y),
+    cv::rectangle(image, cv::Point2f(object.rect.left, object.rect.top),
+                  cv::Point2f(object.rect.right, object.rect.bottom),
                   cv::Scalar(255, 0, 255), 2);
     if (object.left_right == 1) {
-      cv::putText(image, "left",
-                  cv::Point2f(object.tl.x, object.tl.y - 10), 1, 3.0,
+      cv::putText(image, "left", cv::Point2f(object.rect.left, object.rect.top - 10), 1, 3.0,
                   cv::Scalar(255, 0, 255));
     } else {
-      cv::putText(image, "right", cv::Point2f(object.tl.x, object.tl.y - 10), 1, 3.0,
+      cv::putText(image, "right", cv::Point2f(object.rect.left, object.rect.top - 10), 1, 3.0,
                   cv::Scalar(255, 0, 255));
     }
     

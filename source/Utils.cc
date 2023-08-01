@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-07-30 12:53:37
+ * @LastEditTime: 2023-08-01 18:01:44
  * @Description: utils module
  * @FilePath: \Mediapipe-MNN\source\Utils.cc
  */
@@ -78,12 +78,12 @@ std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const 
   // 2.get the align region
   CV::Matrix trans;
   trans.postRotate(angle, 0.5f * width, 0.5f * height);
-  float rect_width = object.br.x - object.tl.x;
-  float rect_height = object.br.y - object.tl.y;
+  float rect_width = object.rect.right - object.rect.left;
+  float rect_height = object.rect.bottom - object.rect.top;
 
   Point2f center;
-  center.x = 0.5f * (object.br.x + object.tl.x);
-  center.y = 0.5f * (object.br.y + object.tl.y);
+  center.x = 0.5f * (object.rect.right + object.rect.left);
+  center.y = 0.5f * (object.rect.bottom + object.rect.top);
   float center_x = trans[0] * center.x + trans[1] * center.y + trans[2] + offset_x_scale * rect_width;
   float center_y = trans[3] * center.x + trans[4] * center.y + trans[5] + offset_y_scale * rect_height;
 
@@ -118,16 +118,16 @@ float sigmoid(float x) {
 }
 
 float getIouOfObjects(const ObjectInfo &a, const ObjectInfo &b) {
-  float xmin = MAX_(a.tl.x, b.tl.x);
-  float ymin = MAX_(a.tl.y, b.tl.y);
-  float xmax = MIN_(a.br.x, b.br.x);
-  float ymax = MIN_(a.br.y, b.br.y);
+  float xmin = MAX_(a.rect.left, b.rect.left);
+  float ymin = MAX_(a.rect.top, b.rect.top);
+  float xmax = MIN_(a.rect.right, b.rect.right);
+  float ymax = MIN_(a.rect.bottom, b.rect.bottom);
 
   float width = MAX_(0.0f, xmax - xmin);
   float height = MAX_(0.0f, ymax - ymin);
   float area_inter = width * height;
-  float area_a = (a.br.x - a.tl.x) * (a.br.y - a.tl.y);
-  float area_b = (b.br.x - b.tl.x) * (b.br.y - b.tl.y);
+  float area_a = (a.rect.right - a.rect.left) * (a.rect.bottom - a.rect.top);
+  float area_b = (b.rect.right - b.rect.left) * (b.rect.bottom - b.rect.top);
 
   float iou = area_inter / (area_a + area_b - area_inter);
   return (iou >= 0.0f ? iou : 0.0f);

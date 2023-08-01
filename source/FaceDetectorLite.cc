@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-30 20:40:28
- * @LastEditTime: 2023-07-31 09:30:34
+ * @LastEditTime: 2023-08-01 17:59:02
  * @Description: face detector lite
  * @FilePath: \Mediapipe-MNN\source\FaceDetectorLite.cc
  */
@@ -144,10 +144,10 @@ bool FaceDetectorLite::Detect(const ImageHead &in, RotateType type,
         br_origin.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
         br_origin.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
 
-        object.tl.x = MIN_(tl_origin.x, br_origin.x);
-        object.tl.y = MIN_(tl_origin.y, br_origin.y);
-        object.br.x = MAX_(tl_origin.x, br_origin.x);
-        object.br.y = MAX_(tl_origin.y, br_origin.y);
+        object.rect.left = MIN_(tl_origin.x, br_origin.x);
+        object.rect.top = MIN_(tl_origin.y, br_origin.y);
+        object.rect.right = MAX_(tl_origin.x, br_origin.x);
+        object.rect.bottom = MAX_(tl_origin.y, br_origin.y);
 
         objects.emplace_back(object);
       }

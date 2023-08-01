@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-07-30 17:02:46
+ * @LastEditTime: 2023-08-01 17:56:07
  * @Description: type defines
  * @FilePath: \Mediapipe-MNN\source\TypeDefines.h
  */
@@ -26,19 +26,14 @@ using LandmarkList = std::vector<Point2f>;
 using NormalizedLandmarkList = std::vector<Point2f>;
 
 struct Rect {
-  float cx;
-  float cy;
-  float w;
-  float h;
-  float r;
-  float score;
+  float left;
+  float top;
+  float right;
+  float bottom;
 };
 
-using NormalizedRect = Rect;
-
 struct ObjectInfo {
-  Point2f tl;
-  Point2f br;
+  Rect rect;
   std::vector<Point2f> landmarks;
   std::vector<Point3f> landmarks3d;
   float score;

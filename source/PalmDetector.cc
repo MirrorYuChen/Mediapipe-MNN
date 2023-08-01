@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-07-30 17:04:55
+ * @LastEditTime: 2023-08-01 17:58:02
  * @Description: palm detector module
  * @FilePath: \Mediapipe-MNN\source\PalmDetector.cc
  */
@@ -174,10 +174,11 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
     tl_origin.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];
     br_origin.x = trans_[0] * br.x + trans_[1] * br.y + trans_[2];
     br_origin.y = trans_[3] * br.x + trans_[4] * br.y + trans_[5];
-    object.tl.x = MIN_(tl_origin.x, br_origin.x);
-    object.tl.y = MIN_(tl_origin.y, br_origin.y);
-    object.br.x = MAX_(tl_origin.x, br_origin.x);
-    object.br.y = MAX_(tl_origin.y, br_origin.y);
+
+    object.rect.left = MIN_(tl_origin.x, br_origin.x);
+    object.rect.top = MIN_(tl_origin.y, br_origin.y);
+    object.rect.right = MAX_(tl_origin.x, br_origin.x);
+    object.rect.bottom = MAX_(tl_origin.y, br_origin.y);
 
     objects.emplace_back(object);
   }

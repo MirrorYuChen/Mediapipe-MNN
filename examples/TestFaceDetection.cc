@@ -1,15 +1,16 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 17:05:18
- * @LastEditTime: 2023-07-30 17:07:32
+ * @LastEditTime: 2023-08-01 18:02:47
  * @Description: Test face detection
  * @FilePath: \Mediapipe-MNN\examples\TestFaceDetection.cc
  */
-#include "TypeDefines.h"
 #include "FaceDetector.h"
 #include "FaceLandmarkDetector.h"
-#include <opencv2/opencv.hpp>
+#include "TypeDefines.h"
 #include <cmath>
+#include <opencv2/opencv.hpp>
+
 
 using namespace mirror;
 
@@ -37,8 +38,10 @@ int main(int argc, char *argv[]) {
   in.width_step = image.step[0];
   in.pixel_format = PixelFormat::BGR;
 
-  const char *face_model_file = "../data/models/face_detection_short_range_fp16.mnn";
-  const char *face_landmark_model_file = "../data/models/face_landmarks_detector_fp16.mnn";
+  const char *face_model_file =
+      "../data/models/face_detection_short_range_fp16.mnn";
+  const char *face_landmark_model_file =
+      "../data/models/face_landmarks_detector_fp16.mnn";
   FaceDetector detector;
   FaceLandmarkDetector landmarker;
   if (!detector.LoadModel(face_model_file) ||
@@ -48,35 +51,30 @@ int main(int argc, char *argv[]) {
   }
   detector.setSourceFormat(in.pixel_format);
   landmarker.setSourceFormat(in.pixel_format);
-  //detector.setUseFull();
+  // detector.setUseFull();
 
   std::vector<ObjectInfo> objects;
   detector.Detect(in, type, objects);
   landmarker.Detect(in, type, objects);
   for (const auto &object : objects) {
-    cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
-                  cv::Point2f(object.br.x, object.br.y),
-                  cv::Scalar(255, 0, 255), 2);    
+    cv::rectangle(image, cv::Point2f(object.rect.left, object.rect.top),
+                  cv::Point2f(object.rect.right, object.rect.bottom),
+                  cv::Scalar(255, 0, 255), 2);
     for (int i = 0; i < object.landmarks.size(); ++i) {
-       cv::Point pt = cv::Point(
-         (int)object.landmarks[i].x,                               
-         (int)object.landmarks[i].y
-      );
+      cv::Point pt = cv::Point((int)object.landmarks[i].x, (int)object.landmarks[i].y);
       cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));
       cv::putText(image, std::to_string(i), pt, 1, 1.0, cv::Scalar(255, 0, 255));
     }
     for (int i = 0; i < object.landmarks3d.size(); ++i) {
-       cv::Point pt = cv::Point(
-         (int)object.landmarks3d[i].x,                               
-         (int)object.landmarks3d[i].y
-      );
-      cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));    
+      cv::Point pt = cv::Point((int)object.landmarks3d[i].x, (int)object.landmarks3d[i].y);
+      cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));
     }
-    cv::putText(image, std::to_string(object.score), cv::Point2f(object.tl.x, object.tl.y + 20),
-                1, 1.0, cv::Scalar(0, 255, 255));
+    cv::putText(image, std::to_string(object.score),
+                cv::Point2f(object.rect.left, object.rect.top + 20), 1, 1.0,
+                cv::Scalar(0, 255, 255));
   }
   cv::imshow("result", image);
-  cv::waitKey(0);  
+  cv::waitKey(0);
 
   return 0;
 }

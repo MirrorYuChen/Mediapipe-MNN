@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-30 21:43:30
- * @LastEditTime: 2023-07-31 09:27:47
+ * @LastEditTime: 2023-08-01 18:02:40
  * @Description: Test MNN face detector
  * @FilePath: \Mediapipe-MNN\examples\TestFaceDetectorLite.cc
  */
@@ -46,9 +46,9 @@ int main(int argc, char *argv[]) {
   std::vector<ObjectInfo> objects;
   detector.Detect(in, type, objects);
   for (const auto &object : objects) {
-    cv::rectangle(image, cv::Point2f(object.tl.x, object.tl.y),
-                  cv::Point2f(object.br.x, object.br.y),
-                  cv::Scalar(255, 0, 255), 2); 
+    cv::rectangle(image, cv::Point2f(object.rect.left, object.rect.top),
+                  cv::Point2f(object.rect.right, object.rect.bottom),
+                  cv::Scalar(255, 0, 255), 2);
   }
   cv::imshow("result", image);
   cv::waitKey(0); 
