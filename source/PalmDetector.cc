@@ -159,7 +159,7 @@ void PalmDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
 
     float dx = dst.x - src.x;
     float dy = dst.y - src.y;
-    object.angle = -(90.0f - std::atan2(-dy, dx) * 180.0f / M_PI);
+    object.angle = -(kTargetPalmAngle - std::atan2(-dy, dx) * 180.0f / M_PI);
 
     object.landmarks.resize(7);
     Point2f pt;

@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 15:47:03
- * @LastEditTime: 2023-07-30 17:04:31
+ * @LastEditTime: 2023-08-01 16:20:34
  * @Description: face detector
  * @FilePath: \Mediapipe-MNN\source\FaceDetector.cc
  */
@@ -178,7 +178,7 @@ void FaceDetector::ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
 
     float dx = dst.x - src.x;
     float dy = dst.y - src.y;
-    object.angle = -(0.0f - std::atan2(-dy, dx) * 180.0f / M_PI);
+    object.angle = -(kTargetFaceAngle - std::atan2(-dy, dx) * 180.0f / M_PI);
 
     tl_origin.x = trans_[0] * tl.x + trans_[1] * tl.y + trans_[2];
     tl_origin.y = trans_[3] * tl.x + trans_[4] * tl.y + trans_[5];

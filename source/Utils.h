@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:31
- * @LastEditTime: 2023-07-30 21:15:57
+ * @LastEditTime: 2023-08-01 16:18:53
  * @Description: utils module
  * @FilePath: \Mediapipe-MNN\source\Utils.h
  */
@@ -20,8 +20,10 @@ namespace mirror {
 #define MIN_(x, y) ((x) < (y) ? (x) : y)
 
 // Indices within the partial landmarks.
-constexpr int kNumLandmarks = 21;
-constexpr float kTargetAngle = M_PI * 0.5f;
+constexpr int kNumPalmLandmarks = 21;
+constexpr float kTargetPalmAngle = 90.0f;
+constexpr int kNumFaceLandmarks = 478;
+constexpr float kTargetFaceAngle = 0.0f;
 float ComputeRotation(const Point2f & src, const Point2f &dst);
 
 std::vector<Point2f> getInputRegion(const ImageHead &in, int out_w, int out_h, RotateType type);
