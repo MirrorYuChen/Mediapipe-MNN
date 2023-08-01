@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:11:06
- * @LastEditTime: 2023-08-01 16:21:33
+ * @LastEditTime: 2023-08-01 18:10:28
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-MNN\source\PalmLandmarkDetector.cc
  */
@@ -69,7 +69,9 @@ bool PalmLandmarkDetector::Detect(const ImageHead &in, RotateType type,
   int width = in.width;
   int height = in.height;
   for (auto &object : objects) {
-    std::vector<Point2f> region = getInputRegion(in, type, object, 2.6f, 0.0f, -0.5f);
+    // std::vector<Point2f> region = getInputRegion(in, type, object, 2.6f, 0.0f, -0.5f);
+    std::vector<Point2f> region = getInputRegion(in, type, object.rect, input_h_, input_w_, object.angle, 2.6f, 0.0f, -0.5f);
+    std::cout << "input hxw: " << input_h_ << ", " << input_w_ << std::endl;
     float points_src[] = {
       region[0].x, region[0].y, region[1].x, region[1].y,
       region[2].x, region[2].y, region[3].x, region[3].y,

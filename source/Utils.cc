@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-08-01 18:01:44
+ * @LastEditTime: 2023-08-01 18:24:10
  * @Description: utils module
  * @FilePath: \Mediapipe-MNN\source\Utils.cc
  */
@@ -67,42 +67,48 @@ std::vector<Point2f> getInputRegion(const ImageHead &in, int out_w, int out_h, R
   return input_region;
 }
 
-std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const ObjectInfo &object,
-                                    float expand_scale, float offset_x_scale, float offset_y_scale) {
+std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type,
+                                    const Rect &rect, int out_h, int out_w,
+                                    float init_angle, float expand_scale,
+                                    float offset_x_scale, float offset_y_scale) {
   int width = in.width;
   int height = in.height;
+  float out_scale = static_cast<float>(out_w) / static_cast<float>(out_h);
   // 1.align the image
-  float init_angle = object.angle;
   float angle = RotateTypeToAngle(type) + init_angle;
 
   // 2.get the align region
   CV::Matrix trans;
   trans.postRotate(angle, 0.5f * width, 0.5f * height);
-  float rect_width = object.rect.right - object.rect.left;
-  float rect_height = object.rect.bottom - object.rect.top;
+  float rect_width = rect.right - rect.left;
+  float rect_height = rect.bottom - rect.top;
+  float center_x = 0.5f * (rect.left + rect.right);
+  float center_y = 0.5f * (rect.top + rect.bottom);
 
-  Point2f center;
-  center.x = 0.5f * (object.rect.right + object.rect.left);
-  center.y = 0.5f * (object.rect.bottom + object.rect.top);
-  float center_x = trans[0] * center.x + trans[1] * center.y + trans[2] + offset_x_scale * rect_width;
-  float center_y = trans[3] * center.x + trans[4] * center.y + trans[5] + offset_y_scale * rect_height;
+  float crop_center_x = trans[0] * center_x + trans[1] * center_y + trans[2] + offset_x_scale * rect_width;
+  float crop_center_y = trans[3] * center_x + trans[4] * center_y + trans[5] + offset_y_scale * rect_height;
 
   // 3. expand the region
   float half_max_side = MAX_(rect_width, rect_height) * 0.5f * expand_scale;
-  float xmin = center_x - half_max_side;
-  float ymin = center_y - half_max_side;
-  float xmax = center_x + half_max_side;
-  float ymax = center_y + half_max_side;
+  float half_crop_width = half_max_side, half_crop_height = half_max_side;
+  if (out_scale > 1.0f) {
+    half_crop_width = half_max_side;
+    half_crop_height = half_crop_width / out_scale;
+  } else {
+    half_crop_height = half_max_side;
+    half_crop_width = half_crop_height * out_scale;
+  }
+
+  float xmin = crop_center_x - half_crop_width;
+  float ymin = crop_center_y - half_crop_height;
+  float xmax = crop_center_x + half_crop_width;
+  float ymax = crop_center_y + half_crop_height;
 
   std::vector<Point2f> region(4);
-  region[0].x = xmin;
-  region[0].y = ymin;
-  region[1].x = xmin;
-  region[1].y = ymax;
-  region[2].x = xmax;
-  region[2].y = ymin;
-  region[3].x = xmax;
-  region[3].y = ymax;
+  region[0].x = xmin, region[0].y = ymin;
+  region[1].x = xmin, region[1].y = ymax;
+  region[2].x = xmax, region[2].y = ymin;
+  region[3].x = xmax, region[3].y = ymax;
 
   std::vector<Point2f> result(4);
   trans.invert(&trans);

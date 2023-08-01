@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-30 12:58:06
- * @LastEditTime: 2023-08-01 16:20:02
+ * @LastEditTime: 2023-08-01 18:23:22
  * @Description: face landmark detector
  * @FilePath: \Mediapipe-MNN\source\FaceLandmarkDetector.cc
  */
@@ -69,7 +69,8 @@ bool FaceLandmarkDetector::Detect(const ImageHead &in, RotateType type,
   int width = in.width;
   int height = in.height;
   for (auto &object : objects) {
-    std::vector<Point2f> region = getInputRegion(in, type, object, 1.5f, 0.0f, 0.0f);
+    // std::vector<Point2f> region = getInputRegion(in, type, object, 1.5f, 0.0f, 0.0f);
+    std::vector<Point2f> region = getInputRegion(in, type, object.rect, input_h_, input_w_, object.angle, 1.5f, 0.0f, 0.0f);
     // clang-format off
     float points_src[] = {
       region[0].x, region[0].y,
