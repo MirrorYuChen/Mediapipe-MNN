@@ -153,7 +153,7 @@ bool FaceDetectorLite::Detect(const ImageHead &in, RotateType type,
       }
     }
   }
-  NMSObjects(objects, iouThreshold_);
+  NMSObjects(objects, iou_thresh_);
 
   std::cout << "End detect." << std::endl;
   return true;

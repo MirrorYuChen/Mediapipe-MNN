@@ -35,8 +35,8 @@ private:
   MNN::Tensor *input_tensor_ = nullptr;
   MNN::CV::Matrix trans_;
   float score_thresh_ = 0.6f;
+  float iou_thresh_ = 0.5f;
 
-  const float iouThreshold_ = 0.5f;
   const std::vector<int> strides_ = { 8, 16, 32};
   const std::vector<std::string> output_names_ = { "cls_8", "cls_16", "cls_32", "obj_8", "obj_16", "obj_32", "bbox_8", "bbox_16", "bbox_32", "kps_8", "kps_16", "kps_32" };
 };

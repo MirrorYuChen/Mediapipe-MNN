@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:20:56
- * @LastEditTime: 2023-06-25 11:08:37
+ * @LastEditTime: 2023-08-02 13:56:24
  * @Description: palm detector
- * @FilePath: \Mediapipe-Hand\source\PalmDetector.h
+ * @FilePath: \Mediapipe-MNN\source\PalmDetector.h
  */
 #pragma once
 
@@ -39,10 +39,10 @@ private:
   MNN::Tensor *input_tensor_ = nullptr;
   MNN::CV::Matrix trans_;
   float score_thresh_ = 0.6f;
+  float iou_thresh_ = 0.5f;
 
   const float meanVals_[3] = {0.0f, 0.0f, 0.0f};
   const float normVals_[3] = {1 / 255.f, 1 / 255.f, 1 / 255.f};
-  const float iouThreshold_ = 0.5f;
 };
 
 } // namespace mirror

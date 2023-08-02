@@ -42,10 +42,10 @@ private:
   MNN::Tensor *input_tensor_ = nullptr;
   MNN::CV::Matrix trans_;
   float score_thresh_ = 0.6f;
+  float iou_thresh_ = 0.5f;
 
   const float meanVals_[3] = {127.5f, 127.5f, 127.5f};
   const float normVals_[3] = {1 / 127.5f, 1 / 127.5f, 1 / 127.5f};
-  const float iouThreshold_ = 0.5f;
   bool use_full_ = false;
   std::string cls_name_;
   std::string reg_name_;

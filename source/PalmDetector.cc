@@ -113,7 +113,7 @@ bool PalmDetector::Detect(const ImageHead &in, RotateType type,
 
   // 4.parse the result
   ParseOutputs(output_classifier.get(), output_regressor.get(), objects);
-  NMSObjects(objects, iouThreshold_);
+  NMSObjects(objects, iou_thresh_);
 
   std::cout << "End detect." << std::endl;
   return true;
