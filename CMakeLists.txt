@@ -27,6 +27,7 @@ set(EXAMPLE_LIST
     TestPalmDetection
     TestFaceDetection
     TestFaceDetectorLite
+    TestFaceDetectorYN
 )
 
 foreach(EXAMPLE ${EXAMPLE_LIST})

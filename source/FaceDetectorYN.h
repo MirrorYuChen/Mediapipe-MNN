@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
- * @Date: 2023-07-30 20:38:44
- * @LastEditTime: 2023-08-02 12:45:28
- * @Description: face detector lite: https://github.com/TnoobT/MNNFaceDetect
- * @FilePath: \Mediapipe-MNN\source\FaceDetectorLite.h
+ * @Date: 2023-08-02 12:43:25
+ * @LastEditTime: 2023-08-02 12:51:26
+ * @Description: face detector yu
+ * @FilePath: \Mediapipe-MNN\source\FaceDetectorYN.h
  */
 #pragma once
 
@@ -16,19 +16,14 @@
 #include <vector>
 
 namespace mirror {
-class FaceDetectorLite {
+class FaceDetectorYN {
 public:
-  FaceDetectorLite() = default;
-  ~FaceDetectorLite();
+  FaceDetectorYN() = default;
+  ~FaceDetectorYN();
 
   bool LoadModel(const char *model_file);
   void setSourceFormat(int format);
-  bool Detect(const ImageHead &in, RotateType type,
-              std::vector<ObjectInfo> &objects);
-
-private:
-  void ParseOutputs(MNN::Tensor *scores, MNN::Tensor *boxes,
-                    std::vector<ObjectInfo> &objects);
+  bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
 
 private:
   bool inited_ = false;
@@ -41,10 +36,9 @@ private:
   MNN::CV::Matrix trans_;
   float score_thresh_ = 0.6f;
 
-  const float meanVals_[3] = {127.5f, 127.5f, 127.5f};
-  const float normVals_[3] = {1 / 127.5f, 1 / 127.5f, 1 / 127.5f};
   const float iouThreshold_ = 0.5f;
-  const int boxNum_ = 5;
+  const std::vector<int> strides_ = { 8, 16, 32};
+  const std::vector<std::string> output_names_ = { "cls_8", "cls_16", "cls_32", "obj_8", "obj_16", "obj_32", "bbox_8", "bbox_16", "bbox_32", "kps_8", "kps_16", "kps_32" };
 };
 
 
