@@ -28,6 +28,7 @@ set(EXAMPLE_LIST
     TestFaceDetection
     TestFaceDetectorLite
     TestFaceDetectorYN
+    TestImageEmbedding
 )
 
 foreach(EXAMPLE ${EXAMPLE_LIST})
