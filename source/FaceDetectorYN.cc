@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-08-02 12:43:33
- * @LastEditTime: 2023-08-02 13:43:11
+ * @LastEditTime: 2023-08-16 10:33:43
  * @Description: Face detector YN
  * @FilePath: \Mediapipe-MNN\source\FaceDetectorYN.cc
  */
@@ -69,7 +69,7 @@ bool FaceDetectorYN::Detect(const ImageHead &in, RotateType type,
   int width = in.width;
   int height = in.height;
   // clang-format off
-  std::vector<Point2f> input_region = getInputRegion(in, input_w_, input_h_, type);
+  std::vector<Point2f> input_region = getInputRegion(in, type, input_w_, input_h_);
   float points_src[] = {
     input_region[0].x, input_region[0].y,
     input_region[1].x, input_region[1].y,

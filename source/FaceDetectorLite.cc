@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-30 20:40:28
- * @LastEditTime: 2023-08-01 17:59:02
+ * @LastEditTime: 2023-08-16 10:33:31
  * @Description: face detector lite
  * @FilePath: \Mediapipe-MNN\source\FaceDetectorLite.cc
  */
@@ -74,7 +74,7 @@ bool FaceDetectorLite::Detect(const ImageHead &in, RotateType type,
   int width = in.width;
   int height = in.height;
   // clang-format off
-  std::vector<Point2f> input_region = getInputRegion(in, input_w_, input_h_, type);
+  std::vector<Point2f> input_region = getInputRegion(in, type, input_w_, input_h_);
   float points_src[] = {
     input_region[0].x, input_region[0].y,
     input_region[1].x, input_region[1].y,
@@ -90,8 +90,7 @@ bool FaceDetectorLite::Detect(const ImageHead &in, RotateType type,
   // clang-format on
   trans_.setPolyToPoly((CV::Point *)points_dst, (CV::Point *)points_src, 4);
   pretreat_->setMatrix(trans_);
-  pretreat_->convert((uint8_t *)in.data, width, height, in.width_step,
-                     input_tensor_);
+  pretreat_->convert((uint8_t *)in.data, width, height, in.width_step, input_tensor_);
 
   // 2.do inference
   int ret = net_->runSession(sess_);

@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-08-04 20:30:02
- * @LastEditTime: 2023-08-16 10:07:03
+ * @LastEditTime: 2023-08-16 10:33:59
  * @Description: Image Embedding
  * @FilePath: \Mediapipe-MNN\source\ImageEmbedding.cc
  */
@@ -72,7 +72,7 @@ bool ImageEmbedding::Detect(const ImageHead &in, RotateType type, Embedding &emb
   // 1.set input
   int width = in.width;
   int height = in.height;
-  std::vector<Point2f> input_region = getInputRegion(in, input_w_, input_h_, type);
+  std::vector<Point2f> input_region = getInputRegion(in, type, input_w_, input_h_, false);
   float points_src[] = {
     input_region[0].x, input_region[0].y, 
     input_region[1].x, input_region[1].y,

@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 15:47:03
- * @LastEditTime: 2023-08-01 17:58:48
+ * @LastEditTime: 2023-08-16 10:33:21
  * @Description: face detector
  * @FilePath: \Mediapipe-MNN\source\FaceDetector.cc
  */
@@ -80,7 +80,7 @@ bool FaceDetector::Detect(const ImageHead &in, RotateType type,
   // 1.set input
   int width = in.width;
   int height = in.height;
-  std::vector<Point2f> input_region = getInputRegion(in, input_w_, input_h_, type);
+  std::vector<Point2f> input_region = getInputRegion(in, type, input_w_, input_h_);
   float points_src[] = {
     input_region[0].x, input_region[0].y, 
     input_region[1].x, input_region[1].y,

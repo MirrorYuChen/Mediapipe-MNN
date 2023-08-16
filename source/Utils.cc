@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-08-04 22:43:01
+ * @LastEditTime: 2023-08-16 10:32:18
  * @Description: utils module
  * @FilePath: \Mediapipe-MNN\source\Utils.cc
  */
@@ -21,18 +21,19 @@ float ComputeRotation(const Point2f &src, const Point2f &dst) {
   return -angle;
 }
 
-std::vector<Point2f> getInputRegion(const ImageHead &in, int out_w, int out_h, RotateType type) {
-  std::vector<Point2f> input_region(4);
-  float in_scale = static_cast<float>(in.width) / static_cast<float>(in.height);
-  float out_scale = static_cast<float>(out_w) / static_cast<float>(out_h);
-
+std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, int out_w, int out_h, bool keep_aspect) {
+  std::vector<Point2f> input_region(4);  
   int region_w = in.width;
   int region_h = in.height;
-  if (in_scale > out_scale) {
-    region_h = region_w / out_scale;
-  } else {
-    region_w = region_h * out_scale;
-  }
+  if (keep_aspect) {
+    float in_scale = static_cast<float>(in.width) / static_cast<float>(in.height);
+    float out_scale = static_cast<float>(out_w) / static_cast<float>(out_h);
+    if (in_scale > out_scale) {
+      region_h = region_w / out_scale;
+    } else {
+      region_w = region_h * out_scale;
+    }
+  }  
   
   switch (type) {
     case RotateType::CLOCKWISE_ROTATE_0:
