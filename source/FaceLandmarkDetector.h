@@ -22,7 +22,7 @@ public:
   ~FaceLandmarkDetector();
 
   bool LoadModel(const char *model_file);
-  void setSourceFormat(int format);
+  void setFormat(int format);
   bool Detect(const ImageHead &in, RotateType type, std::vector<ObjectInfo> &objects);
 
 private:

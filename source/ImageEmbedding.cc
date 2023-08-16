@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-08-04 20:30:02
- * @LastEditTime: 2023-08-04 22:43:51
+ * @LastEditTime: 2023-08-16 10:07:03
  * @Description: Image Embedding
  * @FilePath: \Mediapipe-MNN\source\ImageEmbedding.cc
  */
@@ -42,7 +42,7 @@ bool ImageEmbedding::LoadModel(const char *model_file) {
   return true;
 }
 
-void ImageEmbedding::setSourceFormat(int format) {
+void ImageEmbedding::setFormat(int format) {
   // create image process
   CV::ImageProcess::Config image_process_config;
   image_process_config.filterType = CV::BILINEAR;
@@ -87,8 +87,7 @@ bool ImageEmbedding::Detect(const ImageHead &in, RotateType type, Embedding &emb
   };
   trans_.setPolyToPoly((CV::Point *)points_dst, (CV::Point *)points_src, 4);
   pretreat_->setMatrix(trans_);
-  pretreat_->convert((uint8_t *)in.data, width, height, in.width_step,
-                     input_tensor_);
+  pretreat_->convert((uint8_t *)in.data, width, height, in.width_step, input_tensor_);
 
   // 2.do inference
   int ret = net_->runSession(sess_);
@@ -107,7 +106,7 @@ bool ImageEmbedding::Detect(const ImageHead &in, RotateType type, Embedding &emb
   result->copyToHostTensor(output_result.get());
 
   int channel = output_result->channel();
-  // TODO: pose process
+  embedding = FillQuantizedEmbedding(output_result->host<float>(), channel, true);  
 
   std::cout << "End detect." << std::endl;
   return true;

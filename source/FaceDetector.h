@@ -23,7 +23,7 @@ public:
   ~FaceDetector();
 
   bool LoadModel(const char *model_file);
-  void setSourceFormat(int format);
+  void setFormat(int format);
   void setUseFull();
   bool Detect(const ImageHead &in, RotateType type,
               std::vector<ObjectInfo> &objects);

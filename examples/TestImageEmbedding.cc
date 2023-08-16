@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Failed load model." << std::endl;
     return -1;
   }
-  detector.setSourceFormat(PixelFormat::BGR);
+  detector.setFormat(PixelFormat::BGR);
 
   Embedding embedding_src, embedding_dst;
   detector.Detect(in_src, type, embedding_src);
