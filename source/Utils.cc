@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-08-01 18:24:10
+ * @LastEditTime: 2023-08-04 22:43:01
  * @Description: utils module
  * @FilePath: \Mediapipe-MNN\source\Utils.cc
  */
@@ -176,6 +176,83 @@ float RotateTypeToAngle(RotateType type) {
       break;
   }
   return angle;
+}
+
+Embedding BuildFloatEmbedding(const std::vector<float> &values) {
+  Embedding embedding;
+  embedding.float_embedding = values;
+  return embedding;
+}
+
+Embedding BuildQuantizedEmbedding(const std::vector<int8_t> &values) {
+  Embedding embedding;
+  const uint8_t* data = reinterpret_cast<const uint8_t*>(values.data());
+  embedding.quantized_embedding = {data, data + values.size()};
+  return embedding;  
+}
+
+optional<double> CosineSimilarity(const Embedding& u, const Embedding& v) {
+  if (!u.float_embedding.empty() && !v.float_embedding.empty()) {
+    if (u.float_embedding.size() != v.float_embedding.size()) {
+      return nullopt;
+    }
+    return ComputeCosineSimilarity(
+      u.float_embedding.data(),
+      v.float_embedding.data(),
+      u.float_embedding.size()
+    );
+  }
+
+  if (!u.quantized_embedding.empty() && !v.quantized_embedding.empty()) {
+    if (u.quantized_embedding.size() != v.quantized_embedding.size()) {
+      return nullopt;
+    }
+    return ComputeCosineSimilarity(
+      reinterpret_cast<const int8_t*>(u.quantized_embedding.data()),
+      reinterpret_cast<const int8_t*>(v.quantized_embedding.data()),
+      u.quantized_embedding.size()
+    );
+  }
+  return nullopt;
+}
+
+float GetInverseL2Norm(const float *values, int size) {
+  float squared_l2_norm = 0.0f;
+  for (int i = 0; i < size; ++i) {
+    squared_l2_norm += values[i] * values[i];
+  }
+  float inv_l2_norm = 1.0f;
+  if (squared_l2_norm > 0.0f) {
+    inv_l2_norm = 1.0f / std::sqrt(squared_l2_norm);
+  }
+  return inv_l2_norm;
+}
+
+Embedding FillFloatEmbedding(const float *data, int size, bool l2_normalize) {
+  float inv_l2_norm =
+      l2_normalize ? GetInverseL2Norm(data, size) : 1.0f;
+  Embedding result;
+  for (int i = 0; i < size; ++i) {
+    result.float_embedding.emplace_back(data[i] * inv_l2_norm);
+  }
+  return result;
+}
+
+Embedding FillQuantizedEmbedding(const float *data, int size, bool l2_normalize) {
+  float inv_l2_norm =
+      l2_normalize ? GetInverseL2Norm(data, size) : 1.0f;
+  Embedding result;
+  result.quantized_embedding.resize(size);
+  for (int i = 0; i < size; ++i) {
+    // Normalize.
+    float normalized = data[i] * inv_l2_norm;
+    // Quantize.
+    int unclamped_value = static_cast<int>(roundf(normalized * 128));
+    // Clamp and assign.
+    result.quantized_embedding[i] =
+        static_cast<char>(std::max(-128, std::min(unclamped_value, 127)));
+  }
+  return result;
 }
 
 } // namespace mirror

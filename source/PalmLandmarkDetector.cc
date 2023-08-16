@@ -41,7 +41,7 @@ bool PalmLandmarkDetector::LoadModel(const char *model_file) {
   return true;
 }
 
-void PalmLandmarkDetector::setSourceFormat(int format) {
+void PalmLandmarkDetector::setFormat(int format) {
   // create image process
   CV::ImageProcess::Config image_process_config;
   image_process_config.filterType = CV::BILINEAR;

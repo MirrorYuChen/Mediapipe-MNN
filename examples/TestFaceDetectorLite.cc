@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Failed load model." << std::endl;
     return -1;
   }
-  detector.setSourceFormat(in.pixel_format);
+  detector.setFormat(in.pixel_format);
   std::vector<ObjectInfo> objects;
   detector.Detect(in, type, objects);
   for (const auto &object : objects) {

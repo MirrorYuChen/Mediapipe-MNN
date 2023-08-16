@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-08-01 17:56:07
+ * @LastEditTime: 2023-08-04 20:33:05
  * @Description: type defines
  * @FilePath: \Mediapipe-MNN\source\TypeDefines.h
  */
@@ -74,5 +74,10 @@ typedef struct ImageHead_t {
   int width_step;           ///< 跨度, 即每行所占的字节数
   double time_stamp;        ///< 时间戳
 } ImageHead;
+
+struct Embedding {
+  std::vector<float> float_embedding;
+  std::string quantized_embedding;
+};
 
 } // namespace mirror

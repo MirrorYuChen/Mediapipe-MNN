@@ -44,7 +44,7 @@ bool FaceDetectorLite::LoadModel(const char *model_file) {
   return true;
 }
 
-void FaceDetectorLite::setSourceFormat(int format) {
+void FaceDetectorLite::setFormat(int format) {
   // create image process
   CV::ImageProcess::Config image_process_config;
   image_process_config.filterType = CV::BILINEAR;

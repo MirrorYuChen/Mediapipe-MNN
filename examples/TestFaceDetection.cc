@@ -26,8 +26,8 @@ int main(int argc, char *argv[]) {
     std::cout << "Failed load model." << std::endl;
     return -1;
   }
-  detector.setSourceFormat(PixelFormat::BGR);
-  landmarker.setSourceFormat(PixelFormat::BGR);
+  detector.setFormat(PixelFormat::BGR);
+  landmarker.setFormat(PixelFormat::BGR);
 
   cv::Mat frame;
 #ifdef USE_VIDEO
