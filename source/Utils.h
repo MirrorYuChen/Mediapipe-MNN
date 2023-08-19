@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:31
- * @LastEditTime: 2023-08-16 10:31:55
+ * @LastEditTime: 2023-08-20 01:12:15
  * @Description: utils module
  * @FilePath: \Mediapipe-MNN\source\Utils.h
  */
@@ -25,15 +25,22 @@ constexpr int kNumPalmLandmarks = 21;
 constexpr float kTargetPalmAngle = 90.0f;
 constexpr int kNumFaceLandmarks = 478;
 constexpr float kTargetFaceAngle = 0.0f;
+constexpr int kNumPoseLandmarks = 39;
 float ComputeRotation(const Point2f &src, const Point2f &dst);
 
-std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, int out_w, int out_h, bool keep_aspect=true);
+std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type,
+                                    int out_w, int out_h,
+                                    bool keep_aspect = true);
 std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type,
                                     const Rect &rect, int out_h, int out_w,
                                     float init_angle = 0.0f,
                                     float expand_scale = 1.0f,
                                     float offset_x_scale = 0.0f,
                                     float offset_y_scale = 0.0f);
+
+std::vector<Point2f>
+getInputRegion(const ImageHead &in, RotateType type,
+               const ObjectInfo &object, float expand_scale = 1.0f);
 
 float sigmoid(float x);
 
@@ -43,7 +50,8 @@ void NMSObjects(std::vector<ObjectInfo> &objects, float iou_thresh);
 float RotateTypeToAngle(RotateType type);
 
 template <typename T>
-optional<double> ComputeCosineSimilarity(const T &u, const T &v, int num_elements) {
+optional<double> ComputeCosineSimilarity(const T &u, const T &v,
+                                         int num_elements) {
   if (num_elements <= 0) {
     return nullopt;
   }
@@ -69,6 +77,7 @@ float GetInverseL2Norm(const float *values, int size);
 
 Embedding FillFloatEmbedding(const float *data, int size, bool l2_normalize);
 
-Embedding FillQuantizedEmbedding(const float *data, int size, bool l2_normalize);
+Embedding FillQuantizedEmbedding(const float *data, int size,
+                                 bool l2_normalize);
 
 } // namespace mirror

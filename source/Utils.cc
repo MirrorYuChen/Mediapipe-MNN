@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-08-16 10:32:18
+ * @LastEditTime: 2023-08-20 00:42:10
  * @Description: utils module
  * @FilePath: \Mediapipe-MNN\source\Utils.cc
  */
@@ -104,6 +104,44 @@ std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type,
   float ymin = crop_center_y - half_crop_height;
   float xmax = crop_center_x + half_crop_width;
   float ymax = crop_center_y + half_crop_height;
+
+  std::vector<Point2f> region(4);
+  region[0].x = xmin, region[0].y = ymin;
+  region[1].x = xmin, region[1].y = ymax;
+  region[2].x = xmax, region[2].y = ymin;
+  region[3].x = xmax, region[3].y = ymax;
+
+  std::vector<Point2f> result(4);
+  trans.invert(&trans);
+  for (size_t i = 0; i < region.size(); ++i) {
+    result[i].x = trans[0] * region[i].x + trans[1] * region[i].y + trans[2];
+    result[i].y = trans[3] * region[i].x + trans[4] * region[i].y + trans[5];
+  }
+  return result;
+}
+
+std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const ObjectInfo &object, float expand_scale) {
+  // 1.align the image
+  int width = in.width;
+  int height = in.height;
+  float angle = RotateTypeToAngle(type) + object.angle;
+  CV::Matrix trans;
+  trans.postRotate(angle, 0.5f * width, 0.5f * height);
+
+  float center_x = object.landmarks[0].x;
+  float center_y = object.landmarks[0].y;
+  float dx = object.landmarks[1].x - object.landmarks[0].x;
+  float dy = object.landmarks[1].y - object.landmarks[0].y;
+  float dist = std::sqrtf(dx * dx + dy * dy);
+  float half_long_side = dist * expand_scale;
+
+  float crop_center_x = trans[0] * center_x + trans[1] * center_y + trans[2];
+  float crop_center_y = trans[3] * center_x + trans[4] * center_y + trans[5];
+
+  float xmin = crop_center_x - half_long_side;
+  float ymin = crop_center_y - half_long_side;
+  float xmax = crop_center_x + half_long_side;
+  float ymax = crop_center_y + half_long_side;
 
   std::vector<Point2f> region(4);
   region[0].x = xmin, region[0].y = ymin;

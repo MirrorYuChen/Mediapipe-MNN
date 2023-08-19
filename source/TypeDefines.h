@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:18:41
- * @LastEditTime: 2023-08-04 20:33:05
+ * @LastEditTime: 2023-08-20 01:17:26
  * @Description: type defines
  * @FilePath: \Mediapipe-MNN\source\TypeDefines.h
  */
@@ -20,6 +20,8 @@ struct Point3f {
   float x;
   float y;
   float z;
+  float visibility;  // landmark score
+  float presence;     // landmark in frame score
 };
 
 using LandmarkList = std::vector<Point2f>;

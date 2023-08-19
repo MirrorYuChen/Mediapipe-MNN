@@ -17,7 +17,7 @@
 20230802 | 1.添加最新版本的YuNet推理代码；
 20230814 | 1.添加image embedding相关推理代码；
 20230819 | 1.添加Knift模型推理代码；
-20230820 | 1.添加BlazePose人体检测模型及推理代码；
+20230820 | 1.添加BlazePose人体检测模型及推理代码；2.添加BlazePose人体关键点检测模型及推理代码；
 
 ## 3.参考项目
 - [1] [mediapipe](https://github.com/google/mediapipe)
