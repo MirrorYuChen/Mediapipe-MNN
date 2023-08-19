@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-30 20:40:28
- * @LastEditTime: 2023-08-16 10:33:31
+ * @LastEditTime: 2023-08-19 22:33:09
  * @Description: face detector lite
  * @FilePath: \Mediapipe-MNN\source\FaceDetectorLite.cc
  */
@@ -10,11 +10,11 @@
 #include "Utils.h"
 #include <iostream>
 
+using namespace MNN;
 namespace mirror {
 static constexpr float BIASES[] = {1.0f, 1.0f, 3.0f, 3.0f,  5.0f,
                                    5.0f, 7.0f, 7.0f, 10.0f, 10.0f};
 
-using namespace MNN;
 FaceDetectorLite::~FaceDetectorLite() {
   net_->releaseModel();
   net_->releaseSession(sess_);

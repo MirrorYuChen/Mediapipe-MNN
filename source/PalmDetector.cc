@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-19 17:37:42
- * @LastEditTime: 2023-08-16 10:34:13
+ * @LastEditTime: 2023-08-19 22:33:32
  * @Description: palm detector module
  * @FilePath: \Mediapipe-MNN\source\PalmDetector.cc
  */
@@ -11,8 +11,8 @@
 #include <iostream>
 
 
-namespace mirror {
 using namespace MNN;
+namespace mirror {
 PalmDetector::~PalmDetector() {
   net_->releaseModel();
   net_->releaseSession(sess_);

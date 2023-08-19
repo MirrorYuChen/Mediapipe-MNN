@@ -10,8 +10,8 @@
 #include <cfloat>
 #include <iostream>
 
-namespace mirror {
 using namespace MNN;
+namespace mirror {
 FaceLandmarkDetector::~FaceLandmarkDetector() {
   net_->releaseModel();
   net_->releaseSession(sess_);

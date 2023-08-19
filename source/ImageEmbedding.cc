@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-08-04 20:30:02
- * @LastEditTime: 2023-08-16 10:33:59
+ * @LastEditTime: 2023-08-19 22:33:25
  * @Description: Image Embedding
  * @FilePath: \Mediapipe-MNN\source\ImageEmbedding.cc
  */
@@ -11,8 +11,8 @@
 #include "Utils.h"
 #include "opencv2/opencv.hpp"
 
-namespace mirror {
 using namespace MNN;
+namespace mirror {
 ImageEmbedding::~ImageEmbedding() {
   net_->releaseModel();
   net_->releaseSession(sess_);  

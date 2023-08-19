@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-08-02 12:43:33
- * @LastEditTime: 2023-08-16 10:33:43
+ * @LastEditTime: 2023-08-19 22:33:14
  * @Description: Face detector YN
  * @FilePath: \Mediapipe-MNN\source\FaceDetectorYN.cc
  */
@@ -10,8 +10,8 @@
 #include "Utils.h"
 #include <iostream>
 
-namespace mirror {
 using namespace MNN;
+namespace mirror {
 FaceDetectorYN::~FaceDetectorYN() {
   net_->releaseModel();
   net_->releaseSession(sess_);

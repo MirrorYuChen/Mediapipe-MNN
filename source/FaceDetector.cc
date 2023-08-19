@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-07-29 15:47:03
- * @LastEditTime: 2023-08-16 10:33:21
+ * @LastEditTime: 2023-08-19 22:33:01
  * @Description: face detector
  * @FilePath: \Mediapipe-MNN\source\FaceDetector.cc
  */
@@ -11,8 +11,8 @@
 #include <iostream>
 
 
-namespace mirror {
 using namespace MNN;
+namespace mirror {
 FaceDetector::~FaceDetector() {
   net_->releaseModel();
   net_->releaseSession(sess_);
