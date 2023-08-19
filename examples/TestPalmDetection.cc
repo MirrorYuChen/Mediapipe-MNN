@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
 
   cv::imshow("result", image);
   cv::waitKey(0);  
+  cv::imwrite("../data/results/mediapipe_hand.jpg", image);
 
   return 0;
 }

@@ -19,10 +19,23 @@
 20230819 | 1.添加Knift模型推理代码；
 20230820 | 1.添加BlazePose人体检测模型及推理代码；2.添加BlazePose人体关键点检测模型及推理代码；
 
-## 3.参考项目
+## 3.一些效果
+示例 | 效果图
+--|--
+mediapipe-face | ![mediapipe-face](./data/results/mediapipe_face.jpg)
+mediapipe-hand | ![mediapipe-hand](./data/results/mediapipe_hand.jpg)
+mediapipe-pose | ![mediapipe-pose](./data/results/mediapipe_pose.jpg)
+mediapipe-knift | ![mediapipe-knift](./data/results/mediapipe_knift.jpg)
+mediapipe-embbeding | ![mediapipe-embedding](./data/results/mediapipe-embbeding.jpg)
+YN-facedetection | ![YN-facedetection](./data/results/YN_face.jpg)
+Lite-facedetection | ![Lite-facedetection](./data/results/lite_face.jpg)
+
+- 实测knift效果很差，大概率是我这边接的有问题，但是没发现是什么问题，脑壳疼！后面再研究一下mediapipe源码看看。
+
+## 4.参考项目
 - [1] [mediapipe](https://github.com/google/mediapipe)
 
-## 4.可视化网络输入
+## 5.可视化网络输入
 ```C++
 #include <opencv2/opencv.hpp>
 

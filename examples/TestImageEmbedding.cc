@@ -63,6 +63,7 @@ int main(int argc, char *argv[]) {
 
   auto result = CosineSimilarity(embedding_src, embedding_dst);
   if (result.has_value()) {
+    std::cout << "burger.jpg and burger_crop.jpg." << std::endl;
     std::cout << "similarity: " << result.value() << std::endl;
   }
 

@@ -13,7 +13,7 @@
 
 
 using namespace mirror;
-#define USE_VIDEO 
+//#define USE_VIDEO 
 
 int main(int argc, char *argv[]) {
   const char *image_file = "../data/images/face_tongue.jpg";
@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
 #else
   cv::imshow("frame", frame_src);
   cv::waitKey(0);
+  cv::imwrite("../data/results/mediapipe_face.jpg", frame_src);
 #endif
   return 0;
 }

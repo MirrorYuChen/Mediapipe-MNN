@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
   cv::drawMatches(src_image, src_keypts, dst_image, dst_keypts, good_matches, result);
   cv::imshow("result", result);
   cv::waitKey(0);
-  cv::imwrite("result.jpg", result);
+  cv::imwrite("../data/results/knift.jpg", result);
 
   return 0;
 }
