@@ -15,6 +15,8 @@
 20230729 | 1.添加人脸检测相关模型及基本推理代码；2.添加人脸检测相关解析代码及测试代码；3.添加Blazeface的大模型推理代码；
 20230730 | 1.添加Mediapipe的face mesh推理代码；2.添加MNN的人脸检测模型推理代码；
 20230802 | 1.添加最新版本的YuNet推理代码；
+20230814 | 1.添加image embedding相关推理代码；
+20230819 | 1.添加Knift模型推理代码；
 
 ## 3.参考项目
 - [1] [mediapipe](https://github.com/google/mediapipe)
