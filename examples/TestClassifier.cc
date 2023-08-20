@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-08-20 18:19:00
- * @LastEditTime: 2023-08-20 18:51:23
+ * @LastEditTime: 2023-08-20 19:28:00
  * @Description: Test Classifier module
  * @FilePath: \Mediapipe-MNN\examples\TestClassifier.cc
  */
@@ -32,7 +32,7 @@ static std::vector<std::string> loadLabels(const char *label_file) {
 using namespace mirror;
 int main(int argc, char *argv[]) {
   const char *model_file = "../data/models/classifier_fp16.mnn";
-  const char *label_file = "../data/labels.txt";
+  const char *label_file = "../data/classifier_labels.txt";
   const char *image_file = "../data/images/burger.jpg";
   std::vector<std::string> labels = loadLabels(label_file);
   if (labels.size() == 0) {
