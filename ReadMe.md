@@ -17,11 +17,12 @@
 20230802 | 1.添加最新版本的YuNet推理代码；
 20230814 | 1.添加image embedding相关推理代码；
 20230819 | 1.添加Knift模型推理代码；
-20230820 | 1.添加BlazePose人体检测模型及推理代码；2.添加BlazePose人体关键点检测模型及推理代码；
+20230820 | 1.添加BlazePose人体检测模型及推理代码；2.添加BlazePose人体关键点检测模型及推理代码；3.添加图像分类模型及推理代码；
 
 ## 3.一些效果
 示例 | 效果图
 --|--
+mediapipe-classifier | ![mediapipe-classifier](./data/results/mediapipe_classifier_result.jpg)
 mediapipe-face | ![mediapipe-face](./data/results/mediapipe_face.jpg)
 mediapipe-hand | ![mediapipe-hand](./data/results/mediapipe_hand.jpg)
 mediapipe-pose | ![mediapipe-pose](./data/results/mediapipe_pose.jpg)

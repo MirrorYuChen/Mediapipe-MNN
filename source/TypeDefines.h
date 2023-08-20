@@ -82,4 +82,9 @@ struct Embedding {
   std::string quantized_embedding;
 };
 
+struct ClassifierInfo {
+  int id;
+  float score;
+};
+
 } // namespace mirror

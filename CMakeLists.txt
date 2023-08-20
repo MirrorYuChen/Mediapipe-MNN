@@ -31,6 +31,7 @@ set(EXAMPLE_LIST
     TestImageEmbedding
     TestFeatureDetector
     TestPoseDetector
+    TestClassifier
 )
 
 foreach(EXAMPLE ${EXAMPLE_LIST})
