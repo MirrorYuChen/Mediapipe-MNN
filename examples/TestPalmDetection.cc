@@ -72,14 +72,6 @@ int main(int argc, char *argv[]) {
       );
       cv::circle(image, pt, 2, cv::Scalar(255, 255, 0));
     }
-
-    for (int i = 0; i < object.landmarks3d.size(); ++i) {
-      cv::Point pt = cv::Point(
-        (int)object.landmarks3d[i].x,
-        (int)object.landmarks3d[i].y
-      );
-      cv::circle(image, pt, 2, cv::Scalar(0, 255, 0));
-    }
   }
 
 

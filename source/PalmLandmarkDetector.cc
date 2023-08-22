@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-25 11:11:06
- * @LastEditTime: 2023-08-01 18:10:28
+ * @LastEditTime: 2023-08-22 14:31:02
  * @Description: landmark detector module
  * @FilePath: \Mediapipe-MNN\source\PalmLandmarkDetector.cc
  */
@@ -123,15 +123,21 @@ bool PalmLandmarkDetector::Detect(const ImageHead &in, RotateType type,
       object.left_right = 0;
     }
 
-    Point2f landmark;
+    object.landmarks.resize(kNumPalmLandmarks);
     object.landmarks3d.resize(kNumPalmLandmarks);
+    float *landmarks_ptr = output_landmark_norm->host<float>();
+    float *landmarks3d_ptr = output_landmark_world->host<float>();
     for (int k = 0; k < kNumPalmLandmarks; ++k) {
-      float *landmarks_ptr = landmark_norm->host<float>();
-      landmark.x = landmarks_ptr[3 * k + 0];
-      landmark.y = landmarks_ptr[3 * k + 1];
-      object.landmarks3d[k].x = trans_[0] * landmark.x + trans_[1] * landmark.y + trans_[2];
-      object.landmarks3d[k].y = trans_[3] * landmark.x + trans_[4] * landmark.y + trans_[5];
-      object.landmarks3d[k].z = landmarks_ptr[3 * k + 2];
+      float x = landmarks_ptr[3 * k + 0];
+      float y = landmarks_ptr[3 * k + 1];
+      object.landmarks[k].x = trans_[0] * x + trans_[1] * y + trans_[2];
+      object.landmarks[k].y = trans_[3] * x + trans_[4] * y + trans_[5];
+
+      x = landmarks3d_ptr[3 * k + 0];
+      y = landmarks3d_ptr[3 * k + 1];
+      object.landmarks3d[k].x = trans_[0] * x + trans_[1] * y + trans_[2];
+      object.landmarks3d[k].y = trans_[3] * x + trans_[4] * y + trans_[5];
+      object.landmarks3d[k].z = landmarks3d_ptr[3 * k + 2];                  // z is only a scale
     }
   }
 
