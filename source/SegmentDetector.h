@@ -1,9 +1,9 @@
 /*
  * @Author: chenjingyu
- * @Date: 2023-08-20 03:32:57
- * @LastEditTime: 2023-08-21 19:11:26
- * @Description: Classifier
- * @FilePath: \Mediapipe-MNN\source\Classifier.h
+ * @Date: 2023-08-21 19:09:53
+ * @LastEditTime: 2023-08-22 10:22:21
+ * @Description: Segment detector
+ * @FilePath: \Mediapipe-MNN\source\SegmentDetector.h
  */
 #pragma once
 
@@ -14,18 +14,17 @@
 #include <MNN/Tensor.hpp>
 #include <memory>
 #include <vector>
-
+#include <opencv2/core.hpp>
 
 namespace mirror {
-class Classifier {
+class SegmentDetector {
 public:
-  Classifier() = default;
-  ~Classifier();
+  SegmentDetector() = default;
+  ~SegmentDetector();
 
   bool LoadModel(const char *model_file);
   void setFormat(int format);
-  bool Detect(const ImageHead &in, RotateType type,
-              std::vector<ClassifierInfo> &out);
+  bool Detect(const ImageHead &in, RotateType type, ImageHead &out);
 
 private:
   bool inited_ = false;
@@ -36,12 +35,10 @@ private:
   MNN::Session *sess_ = nullptr;
   MNN::Tensor *input_tensor_ = nullptr;
   MNN::CV::Matrix trans_;
-  float score_thresh_ = 0.6f;
+  cv::Mat result_;
 
   const float meanVals_[3] = {127.5f, 127.5f, 127.5f};
   const float normVals_[3] = {1 / 127.5f, 1 / 127.5f, 1 / 127.5f};
-  std::string cls_name_;
-  std::string reg_name_;
 };
 
 } // namespace mirror

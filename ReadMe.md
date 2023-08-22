@@ -18,6 +18,7 @@
 20230814 | 1.添加image embedding相关推理代码；
 20230819 | 1.添加Knift模型推理代码；
 20230820 | 1.添加BlazePose人体检测模型及推理代码；2.添加BlazePose人体关键点检测模型及推理代码；3.添加图像分类模型及推理代码；
+20230822 | 1.添加mediapipe的selfie_segmentation模型推理demo；
 
 ## 3.一些效果
 示例 | 效果图
@@ -28,6 +29,7 @@ mediapipe-hand | ![mediapipe-hand](./data/results/mediapipe_hand.jpg)
 mediapipe-pose | ![mediapipe-pose](./data/results/mediapipe_pose.jpg)
 mediapipe-knift | ![mediapipe-knift](./data/results/mediapipe_knift.jpg)
 mediapipe-embbeding | ![mediapipe-embedding](./data/results/mediapipe-embbeding.jpg)
+mediapipe-selfie_segmentation | ![mediapipe-selfie_segmentation](./data/results/mediapipe_segment_result.jpg)
 YN-facedetection | ![YN-facedetection](./data/results/YN_face.jpg)
 Lite-facedetection | ![Lite-facedetection](./data/results/lite_face.jpg)
 
