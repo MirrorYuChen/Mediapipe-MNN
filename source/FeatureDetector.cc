@@ -43,6 +43,8 @@ bool FeatureDetector::LoadModel(const char *model_file) {
 
 void FeatureDetector::setMaxFeatures(int max_features) {
   max_features_ = max_features;
+  detector_ = cv::ORB::create(max_features_, scale_factor_, pyramid_level_,
+                              kPatchSize - 1, 0, 2, cv::ORB::FAST_SCORE);
 }
 
 bool FeatureDetector::Process(const cv::Mat &input_view,
