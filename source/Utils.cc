@@ -1,7 +1,7 @@
 /*
  * @Author: chenjingyu
  * @Date: 2023-06-20 12:29:38
- * @LastEditTime: 2023-08-20 00:42:10
+ * @LastEditTime: 2026-03-19 10:27:57
  * @Description: utils module
  * @FilePath: \Mediapipe-MNN\source\Utils.cc
  */
@@ -132,7 +132,7 @@ std::vector<Point2f> getInputRegion(const ImageHead &in, RotateType type, const 
   float center_y = object.landmarks[0].y;
   float dx = object.landmarks[1].x - object.landmarks[0].x;
   float dy = object.landmarks[1].y - object.landmarks[0].y;
-  float dist = std::sqrtf(dx * dx + dy * dy);
+  float dist = std::sqrt(dx * dx + dy * dy);
   float half_long_side = dist * expand_scale;
 
   float crop_center_x = trans[0] * center_x + trans[1] * center_y + trans[2];

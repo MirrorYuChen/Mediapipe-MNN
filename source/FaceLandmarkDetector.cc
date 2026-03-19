@@ -129,6 +129,8 @@ bool FaceLandmarkDetector::Detect(const ImageHead &in, RotateType type,
     object.score = sigmoid(face_score_ptr[0]);
   }
 
+  std::cout << "End detect." << std::endl;
+
   return true;
 }
 

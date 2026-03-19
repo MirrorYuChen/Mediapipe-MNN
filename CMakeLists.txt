@@ -10,10 +10,18 @@ add_subdirectory(${3RD_DIR}/MNN-2.3.0)
 include_directories(
     ${SRC_DIR}
     ${3RD_DIR}/MNN-2.3.0/include
-    ${3RD_DIR}/opencv-3.4.2/include
 )
-link_directories(${CMAKE_CURRENT_LIST_DIR}/3rdLibs/opencv-3.4.2/lib)
-list(APPEND OBJECTS_TO_LINK opencv_world342)
+
+if(MSVC)
+    set(OpenCV_LIBS opencv_world342)
+    include_directories(${3RD_DIR}/opencv-3.4.2/include)
+    link_directories(${CMAKE_CURRENT_LIST_DIR}/3rdLibs/opencv-3.4.2/lib)
+    list(APPEND OBJECTS_TO_LINK opencv_world342)
+else(MSVC)
+    find_package(OpenCV REQUIRED)
+    include_directories(${OpenCV_INCLUDE_DIRS})
+    list(APPEND OBJECTS_TO_LINK ${OpenCV_LIBS})
+endif(MSVC)
 
 file(GLOB_RECURSE SRC_FILES
     ${SRC_DIR}/*.h
@@ -21,7 +29,7 @@ file(GLOB_RECURSE SRC_FILES
 )
 
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES})
-target_link_libraries(${PROJECT_NAME} MNN opencv_world342)
+target_link_libraries(${PROJECT_NAME} MNN ${OpenCV_LIBS})
 
 set(EXAMPLE_LIST
     TestPalmDetection
